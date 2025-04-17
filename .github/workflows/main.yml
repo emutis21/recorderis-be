@@ -46,16 +46,16 @@ jobs:
       - name: Build
         run: go build -o recorderis ./cmd
 
-      # - name: Test
-      #   run: go test -coverprofile cover.out -v ./...
-      #   env:
-      #     DB_HOST: localhost
-      #     DB_PORT: 5432
-      #     DB_USER: postgres
-      #     DB_PASSWD: postgres
-      #     DB_NAME: recorderis_test
-      #     JWT_SECRET: test_secret_key
-      #     APP_ENV: test
+      - name: Test
+        run: go test -coverprofile cover.out -v ./...
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: postgres
+          DB_PASSWD: postgres
+          DB_NAME: recorderis_test
+          JWT_SECRET: test_secret_key
+          APP_ENV: test
 
       - name: Print coverage
         run: go tool cover -func cover.out | grep "total:"
