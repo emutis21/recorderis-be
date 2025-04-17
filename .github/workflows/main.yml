@@ -1,0 +1,69 @@
+name: Recorderis CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: "Build and Test"
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: recorderis_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.23
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+
+      - name: Get dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build -o recorderis ./cmd
+
+      # - name: Test
+      #   run: go test -coverprofile cover.out -v ./...
+      #   env:
+      #     DB_HOST: localhost
+      #     DB_PORT: 5432
+      #     DB_USER: postgres
+      #     DB_PASSWD: postgres
+      #     DB_NAME: recorderis_test
+      #     JWT_SECRET: test_secret_key
+      #     APP_ENV: test
+
+      - name: Print coverage
+        run: go tool cover -func cover.out | grep "total:"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
