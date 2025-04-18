@@ -12,7 +12,7 @@ package swagger
 // @Param        request  body      RegisterRequest  true  "Datos de registro"
 // @Success      201      {object}  TokenResponse
 // @Failure      400      {object}  ErrorResponse
-// @Router       /api/v1/auth/register [post]
+// @Router       /auth/register [post]
 func RegisterUser() {}
 
 // LoginUser godoc
@@ -25,7 +25,7 @@ func RegisterUser() {}
 // @Success      200      {object}  TokenResponse
 // @Failure      400      {object}  ErrorResponse
 // @Failure      401      {object}  ErrorResponse
-// @Router       /api/v1/auth/login [post]
+// @Router       /auth/login [post]
 func LoginUser() {}
 
 // RefreshToken godoc
@@ -37,7 +37,7 @@ func LoginUser() {}
 // @Param        X-Refresh-Token  header    string  true  "Refresh Token"
 // @Success      200              {object}  TokenResponse
 // @Failure      401              {object}  ErrorResponse
-// @Router       /api/v1/auth/refresh [post]
+// @Router       /auth/refresh [post]
 func RefreshToken() {}
 
 // LogoutUser godoc
@@ -49,7 +49,7 @@ func RefreshToken() {}
 // @Security     BearerAuth
 // @Success      200      {object}  SuccessResponse
 // @Failure      401      {object}  ErrorResponse
-// @Router       /api/v1/secure/auth/logout [post]
+// @Router       /secure/auth/logout [post]
 func LogoutUser() {}
 
 // GetUsers godoc
@@ -61,7 +61,7 @@ func LogoutUser() {}
 // @Security     BearerAuth
 // @Success      200      {array}   UserResponse
 // @Failure      401      {object}  ErrorResponse
-// @Router       /api/v1/secure/users [get]
+// @Router       /secure/users [get]
 func GetUsers() {}
 
 // GetUserById godoc
@@ -73,7 +73,7 @@ func GetUsers() {}
 // @Param        id   path      int  true  "ID del usuario"
 // @Success      200  {object}  UserResponse
 // @Failure      404  {object}  ErrorResponse
-// @Router       /api/v1/users/{id} [get]
+// @Router       /users/{id} [get]
 func GetUserById() {}
 
 // CreateUser godoc
@@ -87,7 +87,7 @@ func GetUserById() {}
 // @Success      201      {object}  UserResponse
 // @Failure      400      {object}  ErrorResponse
 // @Failure      401      {object}  ErrorResponse
-// @Router       /api/v1/secure/users [post]
+// @Router       /secure/users [post]
 func CreateUser() {}
 
 // UpdateUser godoc
@@ -103,7 +103,7 @@ func CreateUser() {}
 // @Failure      400      {object}  ErrorResponse
 // @Failure      401      {object}  ErrorResponse
 // @Failure      404      {object}  ErrorResponse
-// @Router       /api/v1/secure/users/{id} [put]
+// @Router       /secure/users/{id} [put]
 func UpdateUser() {}
 
 // DeleteUser godoc
@@ -117,7 +117,7 @@ func UpdateUser() {}
 // @Success      204
 // @Failure      401  {object}  ErrorResponse
 // @Failure      404  {object}  ErrorResponse
-// @Router       /api/v1/secure/users/{id} [delete]
+// @Router       /secure/users/{id} [delete]
 func DeleteUser() {}
 
 // GetUserProfile godoc
@@ -129,7 +129,7 @@ func DeleteUser() {}
 // @Security     BearerAuth
 // @Success      200  {object}  UserResponse
 // @Failure      401  {object}  ErrorResponse
-// @Router       /api/v1/secure/users/me [get]
+// @Router       /secure/users/me [get]
 func GetUserProfile() {}
 
 // Define model structures solely for Swagger documentation
