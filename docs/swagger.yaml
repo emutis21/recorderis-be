@@ -1,0 +1,419 @@
+basePath: /
+definitions:
+  pkg_swagger.CreateUserRequest:
+    properties:
+      display_name:
+        example: New User
+        type: string
+      email:
+        example: new@example.com
+        type: string
+      password:
+        example: securepassword
+        type: string
+      role:
+        example: user
+        type: string
+      username:
+        example: newuser
+        type: string
+    type: object
+  pkg_swagger.ErrorResponse:
+    properties:
+      error:
+        properties:
+          detail:
+            example: Email is required
+            type: string
+          message:
+            example: Invalid input
+            type: string
+          type:
+            example: VALIDATION
+            type: string
+        type: object
+      message:
+        example: Error message
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  pkg_swagger.LoginRequest:
+    properties:
+      device_type:
+        example: web
+        type: string
+      email:
+        example: john@example.com
+        type: string
+      password:
+        example: securepassword
+        type: string
+      remember_me:
+        example: true
+        type: boolean
+    type: object
+  pkg_swagger.RegisterRequest:
+    properties:
+      device_type:
+        example: web
+        type: string
+      display_name:
+        example: John Doe
+        type: string
+      email:
+        example: john@example.com
+        type: string
+      password:
+        example: securepassword
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+  pkg_swagger.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        example: Operación completada con éxito
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  pkg_swagger.TokenResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      expires_in:
+        example: 900
+        type: integer
+      refresh_token:
+        example: abc123def456
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+    type: object
+  pkg_swagger.UpdateUserRequest:
+    properties:
+      display_name:
+        example: Updated Name
+        type: string
+      email:
+        example: updated@example.com
+        type: string
+      password:
+        example: newsecurepassword
+        type: string
+    type: object
+  pkg_swagger.UserResponse:
+    properties:
+      display_name:
+        example: John Doe
+        type: string
+      email:
+        example: john@example.com
+        type: string
+      id:
+        example: "123"
+        type: string
+      role:
+        example: user
+        type: string
+      username:
+        example: johndoe
+        type: string
+    type: object
+host: localhost:4000
+info:
+  contact:
+    email: your-email@domain.com
+    name: API Support
+  description: API for the Recorderis memories application
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Recorderis API
+  version: 0.1.0
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Autentica un usuario y devuelve un token JWT
+      parameters:
+      - description: Credenciales de acceso
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      summary: Iniciar sesión de usuario
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalida el token del usuario y cierra la sesión
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Cerrar sesión
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Obtiene un nuevo access token usando el refresh token
+      parameters:
+      - description: Refresh Token
+        in: header
+        name: X-Refresh-Token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      summary: Refrescar token
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Crea una nueva cuenta de usuario
+      parameters:
+      - description: Datos de registro
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      summary: Registrar un nuevo usuario
+      tags:
+      - auth
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Obtiene una lista de todos los usuarios
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg_swagger.UserResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Listar usuarios
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Crea un nuevo usuario en el sistema
+      parameters:
+      - description: Datos del usuario
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pkg_swagger.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Crear usuario
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Elimina permanentemente un usuario del sistema
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Eliminar usuario
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Devuelve la información de un usuario específico
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.UserResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      summary: Obtener un usuario por ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Actualiza la información de un usuario existente
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Datos a actualizar
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Actualizar usuario
+      tags:
+      - users
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Devuelve la información del usuario autenticado
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Obtener perfil del usuario actual
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer" followed by a space and the JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

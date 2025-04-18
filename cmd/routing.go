@@ -4,6 +4,7 @@ import (
 	"recorderis/cmd/middleware"
 	"recorderis/cmd/services/api/models"
 	ports "recorderis/cmd/services/api/ports/drivers"
+	"recorderis/pkg/swagger"
 
 	auth_models "recorderis/cmd/services/auth/models"
 	auth_drivens "recorderis/cmd/services/auth/ports/drivens"
@@ -14,6 +15,8 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
+	_ "recorderis/docs"
 )
 
 func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tokenManager auth_drivens.ForTokenManager) *gin.Engine {
@@ -246,6 +249,9 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 			})
 		}
 	}
+
+	swaggerRoutes := swagger.NewRoutes()
+	swaggerRoutes.Register(router)
 
 	return router
 }

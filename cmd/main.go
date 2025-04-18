@@ -10,6 +10,24 @@ import (
 	"time"
 )
 
+// @title           Recorderis API
+// @version         0.1.0
+// @description     API for the Recorderis memories application
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.email  your-email@domain.com
+
+// @license.name  MIT
+// @license.url   https://opensource.org/licenses/MIT
+
+// @host      localhost:4000
+// @BasePath  /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and the JWT token.
 func main() {
 	// Configure structured logging
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
