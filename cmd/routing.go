@@ -4,6 +4,7 @@ import (
 	"recorderis/cmd/middleware"
 	"recorderis/cmd/services/api/models"
 	ports "recorderis/cmd/services/api/ports/drivers"
+	"recorderis/internals/constants"
 	"recorderis/pkg/swagger"
 
 	auth_models "recorderis/cmd/services/auth/models"
@@ -24,10 +25,12 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 
 	authMiddleware := middleware.NewAuthMiddleware(tokenManager)
 
-	auth := router.Group("/auth")
-	auth.Use(authMiddleware.EnrichRequest())
+	apiV1 := router.Group(constants.APIPathV1)
+
+	authRoutes := apiV1.Group(constants.AuthPath)
+	authRoutes.Use(authMiddleware.EnrichRequest())
 	{
-		auth.POST("/register", func(c *gin.Context) {
+		authRoutes.POST(constants.RegisterPath, func(c *gin.Context) {
 			h := utils.NewHandler(c)
 			var req auth_models.RegisterRequest
 
@@ -45,7 +48,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 			h.Created(result, utils.MsgRegistered)
 		})
 
-		auth.POST("/login", func(c *gin.Context) {
+		authRoutes.POST(constants.LoginPath, func(c *gin.Context) {
 			h := utils.NewHandler(c)
 			var req auth_models.LoginRequest
 
@@ -70,7 +73,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 			h.OK(result, utils.MsgLoggedIn)
 		})
 
-		auth.POST("/refresh", func(c *gin.Context) {
+		authRoutes.POST(constants.RefreshPath, func(c *gin.Context) {
 			h := utils.NewHandler(c)
 
 			refreshToken := c.GetHeader("X-Refresh-Token")
@@ -89,165 +92,164 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 		})
 	}
 
-	protected := router.Group("")
-	protected.Use(authMiddleware.RequireAuth())
+	publicUserRoutes := apiV1.Group(constants.UsersPath)
 	{
-		protectedAuth := protected.Group("/auth")
-		{
-			protectedAuth.POST("/logout", func(c *gin.Context) {
-				h := utils.NewHandler(c)
+		publicUserRoutes.GET(constants.IDParam, func(c *gin.Context) {
+			h := utils.NewHandler(c)
 
-				userID, exists := c.Get("userID")
-				if !exists {
-					h.Error(errors.NewUnauthorizedError("User not authenticated", nil))
-					return
-				}
+			idStr := c.Param("id")
+			id, convErr := strconv.Atoi(idStr)
+			if convErr != nil {
+				h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
+				return
+			}
 
-				err := authAdapter.Logout(c.Request.Context(), userID.(string))
-				if err != nil {
-					h.Error(err)
-					return
-				}
+			user, err := userAdapter.GetUserById(id)
+			if err != nil {
+				h.Error(err)
+				return
+			}
 
-				h.OK(nil, utils.MsgLoggedOut)
-			})
-		}
+			h.OK(user, utils.MsgRetrieved)
+		})
+	}
 
-		users := router.Group("/users")
-		{
-			users.GET("", func(c *gin.Context) {
-				h := utils.NewHandler(c)
+	secureRoutes := apiV1.Group(constants.SecurePath)
+	secureRoutes.Use(authMiddleware.RequireAuth())
+	secureAuthRoutes := secureRoutes.Group(constants.AuthPath)
+	{
 
-				usersData, err := userAdapter.GetUsers(c.Request.Context())
-				if err != nil {
-					h.Error(err)
+		secureAuthRoutes.POST(constants.LogoutPath, func(c *gin.Context) {
+			h := utils.NewHandler(c)
 
-					return
-				}
+			userID, exists := c.Get("userID")
+			if !exists {
+				h.Error(errors.NewUnauthorizedError("User not authenticated", nil))
+				return
+			}
 
-				h.OK(usersData, utils.MsgRetrieved)
-			})
+			err := authAdapter.Logout(c.Request.Context(), userID.(string))
+			if err != nil {
+				h.Error(err)
+				return
+			}
 
-			users.GET("/:id", func(c *gin.Context) {
-				h := utils.NewHandler(c)
+			h.OK(nil, utils.MsgLoggedOut)
+		})
 
-				idStr := c.Param("id")
-				id, convErr := strconv.Atoi(idStr)
+	}
 
-				user, err := userAdapter.GetUserById(id)
+	secureUserRoutes := secureRoutes.Group(constants.UsersPath)
+	{
+		secureUserRoutes.GET("", func(c *gin.Context) {
+			h := utils.NewHandler(c)
 
-				if convErr != nil {
-					h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
+			usersData, err := userAdapter.GetUsers(c.Request.Context())
+			if err != nil {
+				h.Error(err)
 
-					return
-				}
+				return
+			}
 
-				if err != nil {
-					h.Error(err)
+			h.OK(usersData, utils.MsgRetrieved)
+		})
 
-					return
-				}
+		secureUserRoutes.POST("", func(c *gin.Context) {
+			h := utils.NewHandler(c)
+			var req models.CreateUserRequest
 
-				h.OK(user, utils.MsgRetrieved)
-			})
+			if err := c.ShouldBindJSON(&req); err != nil {
+				validationErr := errors.NewValidationError(utils.MsgInvalidInput, err)
+				h.Error(validationErr)
 
-			users.POST("", func(c *gin.Context) {
-				h := utils.NewHandler(c)
-				var req models.CreateUserRequest
+				return
+			}
 
-				if err := c.ShouldBindJSON(&req); err != nil {
-					validationErr := errors.NewValidationError(utils.MsgInvalidInput, err)
-					h.Error(validationErr)
+			createdUser, err := userAdapter.CreateUser(c.Request.Context(), &req)
+			if err != nil {
+				h.Error(err)
 
-					return
-				}
+				return
+			}
 
-				createdUser, err := userAdapter.CreateUser(c.Request.Context(), &req)
-				if err != nil {
-					h.Error(err)
+			h.Created(createdUser, utils.MsgCreated)
+		})
 
-					return
-				}
+		secureUserRoutes.PUT(constants.IDParam, func(c *gin.Context) {
+			h := utils.NewHandler(c)
+			var req models.UpdateUserRequest
 
-				h.Created(createdUser, utils.MsgCreated)
-			})
+			if err := c.ShouldBindJSON(&req); err != nil {
+				validationErr := errors.NewValidationError(utils.MsgInvalidInput, err)
+				h.Error(validationErr)
 
-			users.PUT("/:id", func(c *gin.Context) {
-				h := utils.NewHandler(c)
-				var req models.UpdateUserRequest
+				return
+			}
 
-				if err := c.ShouldBindJSON(&req); err != nil {
-					validationErr := errors.NewValidationError(utils.MsgInvalidInput, err)
-					h.Error(validationErr)
+			idStr := c.Param("id")
+			id, convErr := strconv.Atoi(idStr)
+			if convErr != nil {
+				h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
 
-					return
-				}
+				return
+			}
 
-				idStr := c.Param("id")
-				id, convErr := strconv.Atoi(idStr)
-				if convErr != nil {
-					h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
+			updatedUser, err := userAdapter.UpdateUser(c.Request.Context(), id, &req)
+			if err != nil {
+				h.Error(err)
 
-					return
-				}
+				return
+			}
 
-				updatedUser, err := userAdapter.UpdateUser(c.Request.Context(), id, &req)
-				if err != nil {
-					h.Error(err)
+			h.OK(updatedUser, utils.MsgUpdated)
+		})
 
-					return
-				}
+		secureUserRoutes.DELETE(constants.IDParam, func(c *gin.Context) {
+			h := utils.NewHandler(c)
 
-				h.OK(updatedUser, utils.MsgUpdated)
-			})
+			idStr := c.Param("id")
+			id, convErr := strconv.Atoi(idStr)
+			if convErr != nil {
+				h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
 
-			users.DELETE("/:id", func(c *gin.Context) {
-				h := utils.NewHandler(c)
+				return
+			}
 
-				idStr := c.Param("id")
-				id, convErr := strconv.Atoi(idStr)
-				if convErr != nil {
-					h.Error(errors.NewValidationError(utils.MsgInvalidID, convErr))
+			err := userAdapter.DeleteUser(c.Request.Context(), id)
+			if err != nil {
+				h.Error(err)
 
-					return
-				}
+				return
+			}
 
-				err := userAdapter.DeleteUser(c.Request.Context(), id)
-				if err != nil {
-					h.Error(err)
+			h.NoContent()
+		})
 
-					return
-				}
+		secureUserRoutes.GET(constants.MePath, func(c *gin.Context) {
+			h := utils.NewHandler(c)
 
-				h.NoContent()
-			})
+			userID, exists := c.Get("userID")
+			if !exists {
+				h.Error(errors.NewUnauthorizedError("No estás autenticado", nil))
+				return
+			}
 
-			users.GET("/me", func(c *gin.Context) {
-				h := utils.NewHandler(c)
+			user, err := authAdapter.GetUserById(c.Request.Context(), userID.(string))
+			if err != nil {
+				h.Error(err)
+				return
+			}
 
-				userID, exists := c.Get("userID")
-				if !exists {
-					h.Error(errors.NewUnauthorizedError("No estás autenticado", nil))
-					return
-				}
+			userResponse := models.UserResponse{
+				ID:          user.UserID,
+				Username:    user.Username,
+				DisplayName: user.DisplayName,
+				Email:       user.Email,
+				Role:        user.Role,
+			}
 
-				user, err := authAdapter.GetUserById(c.Request.Context(), userID.(string))
-				if err != nil {
-					h.Error(err)
-					return
-				}
-
-				userResponse := models.UserResponse{
-					ID:          user.UserID,
-					Username:    user.Username,
-					DisplayName: user.DisplayName,
-					Email:       user.Email,
-					Role:        user.Role,
-				}
-
-				h.OK(userResponse, "Perfil de usuario recuperado exitosamente")
-			})
-		}
+			h.OK(userResponse, "Perfil de usuario recuperado exitosamente")
+		})
 	}
 
 	swaggerRoutes := swagger.NewRoutes()

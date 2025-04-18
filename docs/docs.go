@@ -23,7 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Autentica un usuario y devuelve un token JWT",
                 "consumes": [
@@ -69,41 +69,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/logout": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Invalida el token del usuario y cierra la sesión",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Cerrar sesión",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/refresh": {
+        "/api/v1/auth/refresh": {
             "post": {
                 "description": "Obtiene un nuevo access token usando el refresh token",
                 "consumes": [
@@ -141,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/auth/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "description": "Crea una nueva cuenta de usuario",
                 "consumes": [
@@ -181,7 +147,41 @@ const docTemplate = `{
                 }
             }
         },
-        "/users": {
+        "/api/v1/secure/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Invalida el token del usuario y cierra la sesión",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Cerrar sesión",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/secure/users": {
             "get": {
                 "security": [
                     {
@@ -267,7 +267,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/me": {
+        "/api/v1/secure/users/me": {
             "get": {
                 "security": [
                     {
@@ -301,43 +301,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{id}": {
-            "get": {
-                "description": "Devuelve la información de un usuario específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Obtener un usuario por ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID del usuario",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
-                        }
-                    }
-                }
-            },
+        "/api/v1/secure/users/{id}": {
             "put": {
                 "security": [
                     {
@@ -434,6 +398,44 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "description": "Devuelve la información de un usuario específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Obtener un usuario por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "404": {

@@ -140,7 +140,7 @@ info:
   title: Recorderis API
   version: 0.1.0
 paths:
-  /auth/login:
+  /api/v1/auth/login:
     post:
       consumes:
       - application/json
@@ -170,28 +170,7 @@ paths:
       summary: Iniciar sesión de usuario
       tags:
       - auth
-  /auth/logout:
-    post:
-      consumes:
-      - application/json
-      description: Invalida el token del usuario y cierra la sesión
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/pkg_swagger.SuccessResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Cerrar sesión
-      tags:
-      - auth
-  /auth/refresh:
+  /api/v1/auth/refresh:
     post:
       consumes:
       - application/json
@@ -216,7 +195,7 @@ paths:
       summary: Refrescar token
       tags:
       - auth
-  /auth/register:
+  /api/v1/auth/register:
     post:
       consumes:
       - application/json
@@ -242,7 +221,28 @@ paths:
       summary: Registrar un nuevo usuario
       tags:
       - auth
-  /users:
+  /api/v1/secure/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalida el token del usuario y cierra la sesión
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Cerrar sesión
+      tags:
+      - auth
+  /api/v1/secure/users:
     get:
       consumes:
       - application/json
@@ -296,7 +296,7 @@ paths:
       summary: Crear usuario
       tags:
       - users
-  /users/{id}:
+  /api/v1/secure/users/{id}:
     delete:
       consumes:
       - application/json
@@ -323,30 +323,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Eliminar usuario
-      tags:
-      - users
-    get:
-      consumes:
-      - application/json
-      description: Devuelve la información de un usuario específico
-      parameters:
-      - description: ID del usuario
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/pkg_swagger.UserResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      summary: Obtener un usuario por ID
       tags:
       - users
     put:
@@ -389,7 +365,7 @@ paths:
       summary: Actualizar usuario
       tags:
       - users
-  /users/me:
+  /api/v1/secure/users/me:
     get:
       consumes:
       - application/json
@@ -408,6 +384,31 @@ paths:
       security:
       - BearerAuth: []
       summary: Obtener perfil del usuario actual
+      tags:
+      - users
+  /api/v1/users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Devuelve la información de un usuario específico
+      parameters:
+      - description: ID del usuario
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.UserResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      summary: Obtener un usuario por ID
       tags:
       - users
 securityDefinitions:
