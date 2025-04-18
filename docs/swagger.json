@@ -17,7 +17,7 @@
     "host": "localhost:4000",
     "basePath": "/",
     "paths": {
-        "/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Autentica un usuario y devuelve un token JWT",
                 "consumes": [
@@ -63,41 +63,7 @@
                 }
             }
         },
-        "/auth/logout": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Invalida el token del usuario y cierra la sesión",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Cerrar sesión",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/refresh": {
+        "/api/v1/auth/refresh": {
             "post": {
                 "description": "Obtiene un nuevo access token usando el refresh token",
                 "consumes": [
@@ -135,7 +101,7 @@
                 }
             }
         },
-        "/auth/register": {
+        "/api/v1/auth/register": {
             "post": {
                 "description": "Crea una nueva cuenta de usuario",
                 "consumes": [
@@ -175,7 +141,41 @@
                 }
             }
         },
-        "/users": {
+        "/api/v1/secure/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Invalida el token del usuario y cierra la sesión",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Cerrar sesión",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/secure/users": {
             "get": {
                 "security": [
                     {
@@ -261,7 +261,7 @@
                 }
             }
         },
-        "/users/me": {
+        "/api/v1/secure/users/me": {
             "get": {
                 "security": [
                     {
@@ -295,43 +295,7 @@
                 }
             }
         },
-        "/users/{id}": {
-            "get": {
-                "description": "Devuelve la información de un usuario específico",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Obtener un usuario por ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "ID del usuario",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
-                        }
-                    }
-                }
-            },
+        "/api/v1/secure/users/{id}": {
             "put": {
                 "security": [
                     {
@@ -428,6 +392,44 @@
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/users/{id}": {
+            "get": {
+                "description": "Devuelve la información de un usuario específico",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Obtener un usuario por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID del usuario",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "404": {

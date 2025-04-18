@@ -22,7 +22,7 @@ import (
 // @license.url   https://opensource.org/licenses/MIT
 
 // @host      localhost:4000
-// @BasePath  /
+// @BasePath  /api/v1
 
 // @securityDefinitions.apikey BearerAuth
 // @in header
