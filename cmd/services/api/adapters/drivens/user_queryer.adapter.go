@@ -26,10 +26,12 @@ func (a *UserQueryerAdapter) GetUsers(ctx context.Context) ([]api_models.UserRes
 	var userResponses []api_models.UserResponse
 	for _, user := range users {
 		userResponses = append(userResponses, api_models.UserResponse{
-			ID:          user.UserID,
+			ID:          strconv.Itoa(user.ID),
+			UserID:      user.UserID,
 			Username:    user.Username,
 			DisplayName: user.DisplayName,
 			Email:       user.Email,
+			Role:        string(user.Role),
 			AvatarURL:   user.AvatarURL,
 		})
 	}

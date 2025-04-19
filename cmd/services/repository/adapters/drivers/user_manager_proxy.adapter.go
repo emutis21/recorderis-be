@@ -15,6 +15,10 @@ func (a *UserManagerProxyAdapter) GetUserById(id int) (*models.User, error) {
 	return a.repository.GetUserById(a.ctx, id)
 }
 
+func (a *UserManagerProxyAdapter) FindUserByUserID(ctx context.Context, userID string) (*models.User, error) {
+    return a.repository.FindUserByUserID(ctx, userID)
+}
+
 func (a *UserManagerProxyAdapter) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {
 	err := a.repository.CreateUser(ctx, user)
 	if err != nil {

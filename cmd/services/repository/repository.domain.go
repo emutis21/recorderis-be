@@ -83,6 +83,20 @@ func (r *Repository) GetUserById(ctx context.Context, id int) (*models.User, err
 	return &user, nil
 }
 
+func (r *Repository) FindUserByUserID(ctx context.Context, userID string) (*models.User, error) {
+    var user models.User
+    result := r.db.Where("user_id = ?", userID).First(&user)
+    
+    if result.Error != nil {
+        if result.Error == gorm.ErrRecordNotFound {
+            return nil, errors.NewNotFoundError("User not found", result.Error)
+        }
+        return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch user", result.Error)
+    }
+    
+    return &user, nil
+}
+
 func (r *Repository) UpdateUser(ctx context.Context, user *models.User) error {
 	var existingUser models.User
 	if err := r.db.First(&existingUser, user.ID).Error; err != nil {

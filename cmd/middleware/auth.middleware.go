@@ -29,7 +29,6 @@ func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
 			return
 		}
 
-		// Bearer token
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(401, gin.H{"error": "invalid authorization format"})
@@ -51,16 +50,12 @@ func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
 	}
 }
 
-// EnrichRequest agrega información del cliente al request
 func (m *AuthMiddleware) EnrichRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Capturar IP
 		ip := c.ClientIP()
 
-		// Capturar User-Agent
 		userAgent := c.GetHeader("User-Agent")
 
-		// Guardar en el contexto
 		c.Set("ip_address", ip)
 		c.Set("user_agent", userAgent)
 
