@@ -78,7 +78,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 
 			refreshToken := c.GetHeader("X-Refresh-Token")
 			if refreshToken == "" {
-				h.Error(errors.NewUnauthorizedError("Refresh token no proporcionado", nil))
+				h.Error(errors.NewUnauthorizedError("Missing refresh token", nil))
 				return
 			}
 
@@ -88,7 +88,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 				return
 			}
 
-			h.OK(tokenResponse, "Token refrescado exitosamente")
+			h.OK(tokenResponse, "Token refreshed successfully")
 		})
 	}
 
@@ -230,7 +230,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 
 			userID, exists := c.Get("userID")
 			if !exists {
-				h.Error(errors.NewUnauthorizedError("No estás autenticado", nil))
+				h.Error(errors.NewUnauthorizedError("User not authenticated", nil))
 				return
 			}
 
@@ -249,7 +249,7 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 				Role:        user.Role,
 			}
 
-			h.OK(userResponse, "Perfil de usuario recuperado exitosamente")
+			h.OK(userResponse, "User profile retrieved successfully")
 		})
 	}
 

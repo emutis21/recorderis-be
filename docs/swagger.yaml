@@ -1,6 +1,6 @@
 basePath: /api/v1
 definitions:
-  pkg_swagger.CreateUserRequest:
+  swagger.CreateUserRequest:
     properties:
       display_name:
         example: New User
@@ -18,7 +18,7 @@ definitions:
         example: newuser
         type: string
     type: object
-  pkg_swagger.ErrorResponse:
+  swagger.ErrorResponse:
     properties:
       error:
         properties:
@@ -39,7 +39,7 @@ definitions:
         example: false
         type: boolean
     type: object
-  pkg_swagger.LoginRequest:
+  swagger.LoginRequest:
     properties:
       device_type:
         example: web
@@ -54,7 +54,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  pkg_swagger.RegisterRequest:
+  swagger.RegisterRequest:
     properties:
       device_type:
         example: web
@@ -72,7 +72,7 @@ definitions:
         example: johndoe
         type: string
     type: object
-  pkg_swagger.SuccessResponse:
+  swagger.SuccessResponse:
     properties:
       data: {}
       message:
@@ -82,7 +82,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  pkg_swagger.TokenResponse:
+  swagger.TokenResponse:
     properties:
       access_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -97,7 +97,7 @@ definitions:
         example: Bearer
         type: string
     type: object
-  pkg_swagger.UpdateUserRequest:
+  swagger.UpdateUserRequest:
     properties:
       display_name:
         example: Updated Name
@@ -109,7 +109,7 @@ definitions:
         example: newsecurepassword
         type: string
     type: object
-  pkg_swagger.UserResponse:
+  swagger.UserResponse:
     properties:
       display_name:
         example: John Doe
@@ -144,37 +144,37 @@ paths:
     post:
       consumes:
       - application/json
-      description: Autentica un usuario y devuelve un token JWT
+      description: Authenticates a user and returns a JWT token
       parameters:
-      - description: Credenciales de acceso
+      - description: Login credentials
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/pkg_swagger.LoginRequest'
+          $ref: '#/definitions/swagger.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.TokenResponse'
+            $ref: '#/definitions/swagger.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      summary: Iniciar sesión de usuario
+            $ref: '#/definitions/swagger.ErrorResponse'
+      summary: User login
       tags:
       - auth
   /auth/refresh:
     post:
       consumes:
       - application/json
-      description: Obtiene un nuevo access token usando el refresh token
+      description: Get a new access token using a refresh token
       parameters:
       - description: Refresh Token
         in: header
@@ -187,66 +187,66 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.TokenResponse'
+            $ref: '#/definitions/swagger.TokenResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      summary: Refrescar token
+            $ref: '#/definitions/swagger.ErrorResponse'
+      summary: Refresh token
       tags:
       - auth
   /auth/register:
     post:
       consumes:
       - application/json
-      description: Crea una nueva cuenta de usuario
+      description: Creates a new user account
       parameters:
-      - description: Datos de registro
+      - description: Registration data
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/pkg_swagger.RegisterRequest'
+          $ref: '#/definitions/swagger.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pkg_swagger.TokenResponse'
+            $ref: '#/definitions/swagger.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      summary: Registrar un nuevo usuario
+            $ref: '#/definitions/swagger.ErrorResponse'
+      summary: Register a new user
       tags:
       - auth
   /secure/auth/logout:
     post:
       consumes:
       - application/json
-      description: Invalida el token del usuario y cierra la sesión
+      description: Invalidates user token and ends the session
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.SuccessResponse'
+            $ref: '#/definitions/swagger.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Cerrar sesión
+      summary: Logout
       tags:
       - auth
   /secure/users:
     get:
       consumes:
       - application/json
-      description: Obtiene una lista de todos los usuarios
+      description: Gets a list of all users
       produces:
       - application/json
       responses:
@@ -254,55 +254,55 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/pkg_swagger.UserResponse'
+              $ref: '#/definitions/swagger.UserResponse'
             type: array
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Listar usuarios
+      summary: List users
       tags:
       - users
     post:
       consumes:
       - application/json
-      description: Crea un nuevo usuario en el sistema
+      description: Creates a new user in the system
       parameters:
-      - description: Datos del usuario
+      - description: User data
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/pkg_swagger.CreateUserRequest'
+          $ref: '#/definitions/swagger.CreateUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/pkg_swagger.UserResponse'
+            $ref: '#/definitions/swagger.UserResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Crear usuario
+      summary: Create user
       tags:
       - users
   /secure/users/{id}:
     delete:
       consumes:
       - application/json
-      description: Elimina permanentemente un usuario del sistema
+      description: Permanently removes a user from the system
       parameters:
-      - description: ID del usuario
+      - description: User ID
         in: path
         name: id
         required: true
@@ -315,84 +315,84 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Eliminar usuario
+      summary: Delete user
       tags:
       - users
     put:
       consumes:
       - application/json
-      description: Actualiza la información de un usuario existente
+      description: Updates information for an existing user
       parameters:
-      - description: ID del usuario
+      - description: User ID
         in: path
         name: id
         required: true
         type: integer
-      - description: Datos a actualizar
+      - description: Data to update
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/pkg_swagger.UpdateUserRequest'
+          $ref: '#/definitions/swagger.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.UserResponse'
+            $ref: '#/definitions/swagger.UserResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Actualizar usuario
+      summary: Update user
       tags:
       - users
   /secure/users/me:
     get:
       consumes:
       - application/json
-      description: Devuelve la información del usuario autenticado
+      description: Returns information for the authenticated user
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.UserResponse'
+            $ref: '#/definitions/swagger.UserResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+            $ref: '#/definitions/swagger.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Obtener perfil del usuario actual
+      summary: Get current user profile
       tags:
       - users
   /users/{id}:
     get:
       consumes:
       - application/json
-      description: Devuelve la información de un usuario específico
+      description: Returns information for a specific user
       parameters:
-      - description: ID del usuario
+      - description: User ID
         in: path
         name: id
         required: true
@@ -403,12 +403,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/pkg_swagger.UserResponse'
+            $ref: '#/definitions/swagger.UserResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/pkg_swagger.ErrorResponse'
-      summary: Obtener un usuario por ID
+            $ref: '#/definitions/swagger.ErrorResponse'
+      summary: Get user by ID
       tags:
       - users
 securityDefinitions:

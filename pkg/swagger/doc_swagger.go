@@ -1,36 +1,11 @@
 package swagger
 
-// These are dummy functions that exist only for swagger annotations
-// They won't be called in actual code
-
-// RegisterUser godoc
-// @Summary      Registrar un nuevo usuario
-// @Description  Crea una nueva cuenta de usuario
-// @Tags         auth
-// @Accept       json
-// @Produce      json
-// @Param        request  body      RegisterRequest  true  "Datos de registro"
-// @Success      201      {object}  TokenResponse
-// @Failure      400      {object}  ErrorResponse
-// @Router       /auth/register [post]
-func RegisterUser() {}
-
-// LoginUser godoc
-// @Summary      Iniciar sesión de usuario
-// @Description  Autentica un usuario y devuelve un token JWT
-// @Tags         auth
-// @Accept       json
-// @Produce      json
-// @Param        request  body      LoginRequest  true  "Credenciales de acceso"
-// @Success      200      {object}  TokenResponse
-// @Failure      400      {object}  ErrorResponse
-// @Failure      401      {object}  ErrorResponse
-// @Router       /auth/login [post]
-func LoginUser() {}
+// Auth endpoints
+// --------------
 
 // RefreshToken godoc
-// @Summary      Refrescar token
-// @Description  Obtiene un nuevo access token usando el refresh token
+// @Summary      Refresh token
+// @Description  Get a new access token using a refresh token
 // @Tags         auth
 // @Accept       json
 // @Produce      json
@@ -40,9 +15,34 @@ func LoginUser() {}
 // @Router       /auth/refresh [post]
 func RefreshToken() {}
 
+// LoginUser godoc
+// @Summary      User login
+// @Description  Authenticates a user and returns a JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      LoginRequest  true  "Login credentials"
+// @Success      200      {object}  TokenResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /auth/login [post]
+func LoginUser() {}
+
+// RegisterUser godoc
+// @Summary      Register a new user
+// @Description  Creates a new user account
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      RegisterRequest  true  "Registration data"
+// @Success      201      {object}  TokenResponse
+// @Failure      400      {object}  ErrorResponse
+// @Router       /auth/register [post]
+func RegisterUser() {}
+
 // LogoutUser godoc
-// @Summary      Cerrar sesión
-// @Description  Invalida el token del usuario y cierra la sesión
+// @Summary      Logout
+// @Description  Invalidates user token and ends the session
 // @Tags         auth
 // @Accept       json
 // @Produce      json
@@ -52,9 +52,12 @@ func RefreshToken() {}
 // @Router       /secure/auth/logout [post]
 func LogoutUser() {}
 
+// User endpoints
+// -------------
+
 // GetUsers godoc
-// @Summary      Listar usuarios
-// @Description  Obtiene una lista de todos los usuarios
+// @Summary      List users
+// @Description  Gets a list of all users
 // @Tags         users
 // @Accept       json
 // @Produce      json
@@ -65,64 +68,20 @@ func LogoutUser() {}
 func GetUsers() {}
 
 // GetUserById godoc
-// @Summary      Obtener un usuario por ID
-// @Description  Devuelve la información de un usuario específico
+// @Summary      Get user by ID
+// @Description  Returns information for a specific user
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        id   path      int  true  "ID del usuario"
+// @Param        id   path      int  true  "User ID"
 // @Success      200  {object}  UserResponse
 // @Failure      404  {object}  ErrorResponse
 // @Router       /users/{id} [get]
 func GetUserById() {}
 
-// CreateUser godoc
-// @Summary      Crear usuario
-// @Description  Crea un nuevo usuario en el sistema
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Security     BearerAuth
-// @Param        request  body      CreateUserRequest  true  "Datos del usuario"
-// @Success      201      {object}  UserResponse
-// @Failure      400      {object}  ErrorResponse
-// @Failure      401      {object}  ErrorResponse
-// @Router       /secure/users [post]
-func CreateUser() {}
-
-// UpdateUser godoc
-// @Summary      Actualizar usuario
-// @Description  Actualiza la información de un usuario existente
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Security     BearerAuth
-// @Param        id       path      int               true  "ID del usuario"
-// @Param        request  body      UpdateUserRequest  true  "Datos a actualizar"
-// @Success      200      {object}  UserResponse
-// @Failure      400      {object}  ErrorResponse
-// @Failure      401      {object}  ErrorResponse
-// @Failure      404      {object}  ErrorResponse
-// @Router       /secure/users/{id} [put]
-func UpdateUser() {}
-
-// DeleteUser godoc
-// @Summary      Eliminar usuario
-// @Description  Elimina permanentemente un usuario del sistema
-// @Tags         users
-// @Accept       json
-// @Produce      json
-// @Security     BearerAuth
-// @Param        id   path      int  true  "ID del usuario"
-// @Success      204
-// @Failure      401  {object}  ErrorResponse
-// @Failure      404  {object}  ErrorResponse
-// @Router       /secure/users/{id} [delete]
-func DeleteUser() {}
-
 // GetUserProfile godoc
-// @Summary      Obtener perfil del usuario actual
-// @Description  Devuelve la información del usuario autenticado
+// @Summary      Get current user profile
+// @Description  Returns information for the authenticated user
 // @Tags         users
 // @Accept       json
 // @Produce      json
@@ -132,7 +91,50 @@ func DeleteUser() {}
 // @Router       /secure/users/me [get]
 func GetUserProfile() {}
 
-// Define model structures solely for Swagger documentation
+// CreateUser godoc
+// @Summary      Create user
+// @Description  Creates a new user in the system
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        request  body      CreateUserRequest  true  "User data"
+// @Success      201      {object}  UserResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/users [post]
+func CreateUser() {}
+
+// UpdateUser godoc
+// @Summary      Update user
+// @Description  Updates information for an existing user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id       path      int               true  "User ID"
+// @Param        request  body      UpdateUserRequest  true  "Data to update"
+// @Success      200      {object}  UserResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Failure      404      {object}  ErrorResponse
+// @Router       /secure/users/{id} [put]
+func UpdateUser() {}
+
+// DeleteUser godoc
+// @Summary      Delete user
+// @Description  Permanently removes a user from the system
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      int  true  "User ID"
+// @Success      204
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/users/{id} [delete]
+func DeleteUser() {}
+
 type RegisterRequest struct {
 	Username    string `json:"username" example:"johndoe"`
 	DisplayName string `json:"display_name" example:"John Doe"`
