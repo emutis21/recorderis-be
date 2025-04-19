@@ -25,7 +25,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Autentica un usuario y devuelve un token JWT",
+                "description": "Authenticates a user and returns a JWT token",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,15 +35,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Iniciar sesión de usuario",
+                "summary": "User login",
                 "parameters": [
                     {
-                        "description": "Credenciales de acceso",
+                        "description": "Login credentials",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.LoginRequest"
+                            "$ref": "#/definitions/swagger.LoginRequest"
                         }
                     }
                 ],
@@ -51,19 +51,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
+                            "$ref": "#/definitions/swagger.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -71,7 +71,7 @@ const docTemplate = `{
         },
         "/auth/refresh": {
             "post": {
-                "description": "Obtiene un nuevo access token usando el refresh token",
+                "description": "Get a new access token using a refresh token",
                 "consumes": [
                     "application/json"
                 ],
@@ -81,7 +81,7 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Refrescar token",
+                "summary": "Refresh token",
                 "parameters": [
                     {
                         "type": "string",
@@ -95,13 +95,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
+                            "$ref": "#/definitions/swagger.TokenResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -109,7 +109,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Crea una nueva cuenta de usuario",
+                "description": "Creates a new user account",
                 "consumes": [
                     "application/json"
                 ],
@@ -119,15 +119,15 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Registrar un nuevo usuario",
+                "summary": "Register a new user",
                 "parameters": [
                     {
-                        "description": "Datos de registro",
+                        "description": "Registration data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.RegisterRequest"
+                            "$ref": "#/definitions/swagger.RegisterRequest"
                         }
                     }
                 ],
@@ -135,13 +135,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
+                            "$ref": "#/definitions/swagger.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -154,7 +154,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Invalida el token del usuario y cierra la sesión",
+                "description": "Invalidates user token and ends the session",
                 "consumes": [
                     "application/json"
                 ],
@@ -164,18 +164,18 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Cerrar sesión",
+                "summary": "Logout",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
+                            "$ref": "#/definitions/swagger.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -188,7 +188,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Obtiene una lista de todos los usuarios",
+                "description": "Gets a list of all users",
                 "consumes": [
                     "application/json"
                 ],
@@ -198,21 +198,21 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Listar usuarios",
+                "summary": "List users",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/pkg_swagger.UserResponse"
+                                "$ref": "#/definitions/swagger.UserResponse"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -223,7 +223,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Crea un nuevo usuario en el sistema",
+                "description": "Creates a new user in the system",
                 "consumes": [
                     "application/json"
                 ],
@@ -233,15 +233,15 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Crear usuario",
+                "summary": "Create user",
                 "parameters": [
                     {
-                        "description": "Datos del usuario",
+                        "description": "User data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.CreateUserRequest"
+                            "$ref": "#/definitions/swagger.CreateUserRequest"
                         }
                     }
                 ],
@@ -249,19 +249,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -274,7 +274,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Devuelve la información del usuario autenticado",
+                "description": "Returns information for the authenticated user",
                 "consumes": [
                     "application/json"
                 ],
@@ -284,18 +284,18 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Obtener perfil del usuario actual",
+                "summary": "Get current user profile",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -308,7 +308,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Actualiza la información de un usuario existente",
+                "description": "Updates information for an existing user",
                 "consumes": [
                     "application/json"
                 ],
@@ -318,22 +318,22 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Actualizar usuario",
+                "summary": "Update user",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID del usuario",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Datos a actualizar",
+                        "description": "Data to update",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UpdateUserRequest"
+                            "$ref": "#/definitions/swagger.UpdateUserRequest"
                         }
                     }
                 ],
@@ -341,25 +341,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -370,7 +370,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Elimina permanentemente un usuario del sistema",
+                "description": "Permanently removes a user from the system",
                 "consumes": [
                     "application/json"
                 ],
@@ -380,11 +380,11 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Eliminar usuario",
+                "summary": "Delete user",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID del usuario",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -397,13 +397,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -411,7 +411,7 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
-                "description": "Devuelve la información de un usuario específico",
+                "description": "Returns information for a specific user",
                 "consumes": [
                     "application/json"
                 ],
@@ -421,11 +421,11 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Obtener un usuario por ID",
+                "summary": "Get user by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "ID del usuario",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -435,13 +435,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.UserResponse"
+                            "$ref": "#/definitions/swagger.UserResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                            "$ref": "#/definitions/swagger.ErrorResponse"
                         }
                     }
                 }
@@ -449,7 +449,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "pkg_swagger.CreateUserRequest": {
+        "swagger.CreateUserRequest": {
             "type": "object",
             "properties": {
                 "display_name": {
@@ -474,7 +474,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.ErrorResponse": {
+        "swagger.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -504,7 +504,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.LoginRequest": {
+        "swagger.LoginRequest": {
             "type": "object",
             "properties": {
                 "device_type": {
@@ -525,7 +525,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.RegisterRequest": {
+        "swagger.RegisterRequest": {
             "type": "object",
             "properties": {
                 "device_type": {
@@ -550,7 +550,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.SuccessResponse": {
+        "swagger.SuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -564,7 +564,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.TokenResponse": {
+        "swagger.TokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -585,7 +585,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.UpdateUserRequest": {
+        "swagger.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "display_name": {
@@ -602,7 +602,7 @@ const docTemplate = `{
                 }
             }
         },
-        "pkg_swagger.UserResponse": {
+        "swagger.UserResponse": {
             "type": "object",
             "properties": {
                 "display_name": {
