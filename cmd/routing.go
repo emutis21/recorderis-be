@@ -241,7 +241,8 @@ func CreateRouter(userAdapter ports.ForUser, authAdapter auth_ports.ForAuth, tok
 			}
 
 			userResponse := models.UserResponse{
-				ID:          user.UserID,
+				ID:          strconv.Itoa(user.ID),
+				UserID:      user.UserID,
 				Username:    user.Username,
 				DisplayName: user.DisplayName,
 				Email:       user.Email,

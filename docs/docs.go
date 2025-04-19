@@ -23,7 +23,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/auth/login": {
+        "/auth/login": {
             "post": {
                 "description": "Autentica un usuario y devuelve un token JWT",
                 "consumes": [
@@ -69,7 +69,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/refresh": {
+        "/auth/refresh": {
             "post": {
                 "description": "Obtiene un nuevo access token usando el refresh token",
                 "consumes": [
@@ -107,7 +107,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/auth/register": {
+        "/auth/register": {
             "post": {
                 "description": "Crea una nueva cuenta de usuario",
                 "consumes": [
@@ -147,7 +147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/secure/auth/logout": {
+        "/secure/auth/logout": {
             "post": {
                 "security": [
                     {
@@ -181,7 +181,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/secure/users": {
+        "/secure/users": {
             "get": {
                 "security": [
                     {
@@ -267,7 +267,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/secure/users/me": {
+        "/secure/users/me": {
             "get": {
                 "security": [
                     {
@@ -301,7 +301,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/secure/users/{id}": {
+        "/secure/users/{id}": {
             "put": {
                 "security": [
                     {
@@ -409,7 +409,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/{id}": {
+        "/users/{id}": {
             "get": {
                 "description": "Devuelve la información de un usuario específico",
                 "consumes": [
@@ -642,7 +642,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "0.1.0",
 	Host:             "localhost:4000",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Recorderis API",
 	Description:      "API for the Recorderis memories application",
