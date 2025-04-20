@@ -27,3 +27,17 @@ const (
 	RefreshPath  = "/refresh"
 	LogoutPath   = "/logout"
 )
+
+// Memory paths
+const (
+	MemoriesPath = "/memories"
+	MemoryPath   = "/memory"
+	MemoryIDPath = "/:memory_id"
+)
+
+type ContextKey string
+
+// Context keys
+const (
+	UserIDKey ContextKey = "userID"
+)

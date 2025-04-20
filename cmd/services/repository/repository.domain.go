@@ -17,7 +17,9 @@ type Repository struct {
 
 func NewRepository() (*Repository, error) {
 	dsn := "host=localhost user=recorderis_user password=recorderis_pass dbname=recorderis_db port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		DisableForeignKeyConstraintWhenMigrating: true,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +28,13 @@ func NewRepository() (*Repository, error) {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Memory{},
+		&models.Description{},
+		&models.Photo{},
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -36,6 +44,7 @@ func NewRepository() (*Repository, error) {
 	}, nil
 }
 
+/* users */
 func (r *Repository) GetUsers(ctx context.Context) ([]models.User, error) {
 	var users []models.User
 
@@ -84,17 +93,17 @@ func (r *Repository) GetUserById(ctx context.Context, id int) (*models.User, err
 }
 
 func (r *Repository) FindUserByUserID(ctx context.Context, userID string) (*models.User, error) {
-    var user models.User
-    result := r.db.Where("user_id = ?", userID).First(&user)
-    
-    if result.Error != nil {
-        if result.Error == gorm.ErrRecordNotFound {
-            return nil, errors.NewNotFoundError("User not found", result.Error)
-        }
-        return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch user", result.Error)
-    }
-    
-    return &user, nil
+	var user models.User
+	result := r.db.Where("user_id = ?", userID).First(&user)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("User not found", result.Error)
+		}
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch user", result.Error)
+	}
+
+	return &user, nil
 }
 
 func (r *Repository) UpdateUser(ctx context.Context, user *models.User) error {
@@ -156,4 +165,101 @@ func (r *Repository) FindUserByEmail(ctx context.Context, email string) (*models
 	}
 
 	return &user, nil
+}
+
+/* memories */
+func (r *Repository) CreateMemory(ctx context.Context, memory *models.Memory) error {
+	if result := r.db.Create(memory); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to create memory", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) GetMemories(ctx context.Context, userID string) ([]models.Memory, error) {
+	var memories []models.Memory
+
+	result := r.db.Where("user_id = ?", userID).Find(&memories)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch memories", result.Error)
+	}
+
+	return memories, nil
+}
+
+func (r *Repository) GetMemoryByMemoryID(ctx context.Context, memoryID string) (*models.Memory, error) {
+	var memory models.Memory
+
+	result := r.db.Where("memory_id = ?", memoryID).First(&memory)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("Memory not found", result.Error)
+		}
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch memory", result.Error)
+	}
+
+	return &memory, nil
+}
+
+func (r *Repository) UpdateMemory(ctx context.Context, memory *models.Memory) error {
+	var existingMemory models.Memory
+	if err := r.db.Where("memory_id = ?", memory.MemoryID).First(&existingMemory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	if memory.Title != "" {
+		existingMemory.Title = memory.Title
+	}
+
+	if !memory.Date.IsZero() {
+		existingMemory.Date = memory.Date
+	}
+
+	if memory.IsPublicPtr != nil {
+		existingMemory.IsPublic = *memory.IsPublicPtr
+	}
+
+	if memory.UserID != "" {
+		existingMemory.UserID = memory.UserID
+	}
+
+	if memory.IndexPtr != nil {
+		existingMemory.Index = *memory.IndexPtr
+	}
+
+	if memory.Descriptions != nil {
+		existingMemory.Descriptions = memory.Descriptions
+	}
+
+	if memory.Photos != nil {
+		existingMemory.Photos = memory.Photos
+	}
+
+	if result := r.db.Save(&existingMemory); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to update memory", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DeleteMemory(ctx context.Context, memoryID string) error {
+	var memory models.Memory
+	if err := r.db.Where("memory_id = ?", memoryID).First(&memory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	result := r.db.Delete(&memory)
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to delete memory", result.Error)
+	}
+
+	return nil
 }

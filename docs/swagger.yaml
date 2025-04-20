@@ -1,5 +1,30 @@
 basePath: /api/v1
 definitions:
+  models.CreateDescriptionRequest:
+    properties:
+      index:
+        type: integer
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  swagger.CreateMemoryRequest:
+    properties:
+      date:
+        type: string
+      descriptions:
+        items:
+          $ref: '#/definitions/models.CreateDescriptionRequest'
+        type: array
+      is_public:
+        type: boolean
+      title:
+        type: string
+    required:
+    - date
+    - title
+    type: object
   swagger.CreateUserRequest:
     properties:
       display_name:
@@ -54,6 +79,27 @@ definitions:
         example: true
         type: boolean
     type: object
+  swagger.MemoryResponse:
+    properties:
+      created_at:
+        example: "2024-04-01T10:30:00Z"
+        type: string
+      date:
+        example: "2024-07-15T00:00:00Z"
+        type: string
+      id:
+        example: abc123def456
+        type: string
+      is_public:
+        example: false
+        type: boolean
+      title:
+        example: Summer Vacation 2024
+        type: string
+      updated_at:
+        example: "2024-04-02T15:45:00Z"
+        type: string
+    type: object
   swagger.RegisterRequest:
     properties:
       device_type:
@@ -95,6 +141,18 @@ definitions:
         type: string
       token_type:
         example: Bearer
+        type: string
+    type: object
+  swagger.UpdateMemoryRequest:
+    properties:
+      date:
+        example: "2024-07-20"
+        type: string
+      is_public:
+        example: true
+        type: boolean
+      title:
+        example: Updated Vacation Title
         type: string
     type: object
   swagger.UpdateUserRequest:
@@ -242,6 +300,159 @@ paths:
       summary: Logout
       tags:
       - auth
+  /secure/memories:
+    get:
+      consumes:
+      - application/json
+      description: Gets all memories for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/swagger.MemoryResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List memories
+      tags:
+      - memories
+    post:
+      consumes:
+      - application/json
+      description: Creates a new memory for the authenticated user
+      parameters:
+      - description: Memory data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.CreateMemoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/swagger.MemoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create memory
+      tags:
+      - memories
+  /secure/memories/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes a memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete memory
+      tags:
+      - memories
+    get:
+      consumes:
+      - application/json
+      description: Returns information for a specific memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.MemoryResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get memory by ID
+      tags:
+      - memories
+    put:
+      consumes:
+      - application/json
+      description: Updates information for an existing memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.UpdateMemoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.MemoryResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update memory
+      tags:
+      - memories
   /secure/users:
     get:
       consumes:

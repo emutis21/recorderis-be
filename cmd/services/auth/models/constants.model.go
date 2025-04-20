@@ -14,9 +14,9 @@ const (
 	DeviceTypeTablet = "tablet"
 
 	// Error Messages
-	ErrInvalidCredentials = "credenciales inválidas"
-	ErrUserNotFound       = "usuario no encontrado"
-	ErrUserExists         = "usuario ya existe"
-	ErrInvalidToken       = "token inválido"
-	ErrExpiredToken       = "token expirado"
+	ErrInvalidCredentials = "invalid credentials"
+	ErrUserNotFound       = "user not found"
+	ErrUserExists         = "user already exists"
+	ErrInvalidToken       = "invalid token"
+	ErrExpiredToken       = "token expired"
 )

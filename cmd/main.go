@@ -34,14 +34,14 @@ func main() {
 	slog.SetDefault(logger)
 
 	// Composer
-	userAdapter, authAdapter, tokenMgr, err := Compose()
+	userAdapter, authAdapter, memoryAdapter, tokenMgr, err := Compose()
 	if err != nil {
 		slog.Error("Failed to compose dependencies", "error", err)
 		os.Exit(1)
 	}
 
 	/* Create router */
-	router := CreateRouter(userAdapter, authAdapter, tokenMgr)
+	router := CreateRouter(userAdapter, authAdapter, memoryAdapter, tokenMgr)
 
 	// Configure server
 	server := &http.Server{
