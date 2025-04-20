@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"recorderis/cmd/services/repository/migrations"
 	"recorderis/cmd/services/repository/models"
 	"recorderis/internals/errors"
@@ -170,7 +169,6 @@ func (r *Repository) FindUserByEmail(ctx context.Context, email string) (*models
 
 /* memories */
 func (r *Repository) CreateMemory(ctx context.Context, memory *models.Memory) error {
-	fmt.Println("Creating memory:", memory)
 	if result := r.db.Create(memory); result.Error != nil {
 		return errors.NewError(errors.ErrDatabase, "Failed to create memory", result.Error)
 	}
@@ -205,7 +203,7 @@ func (r *Repository) GetMemoryByMemoryID(ctx context.Context, memoryID string) (
 
 func (r *Repository) UpdateMemory(ctx context.Context, memory *models.Memory) error {
 	var existingMemory models.Memory
-	if err := r.db.First(&existingMemory, memory.ID).Error; err != nil {
+	if err := r.db.Where("memory_id = ?", memory.MemoryID).First(&existingMemory).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return errors.NewNotFoundError("Memory not found", err)
 		}
@@ -221,16 +219,16 @@ func (r *Repository) UpdateMemory(ctx context.Context, memory *models.Memory) er
 		existingMemory.Date = memory.Date
 	}
 
-	if memory.IsPublic {
-		existingMemory.IsPublic = memory.IsPublic
+	if memory.IsPublicPtr != nil {
+		existingMemory.IsPublic = *memory.IsPublicPtr
 	}
 
 	if memory.UserID != "" {
 		existingMemory.UserID = memory.UserID
 	}
 
-	if memory.Index != 0 {
-		existingMemory.Index = memory.Index
+	if memory.IndexPtr != nil {
+		existingMemory.Index = *memory.IndexPtr
 	}
 
 	if memory.Descriptions != nil {

@@ -1,5 +1,10 @@
 package swagger
 
+import (
+	"recorderis/cmd/services/memory/models"
+	"recorderis/internals/utils"
+)
+
 // Auth endpoints
 // --------------
 
@@ -135,6 +140,79 @@ func UpdateUser() {}
 // @Router       /secure/users/{id} [delete]
 func DeleteUser() {}
 
+// Memory endpoints
+// --------------
+
+// GetMemories godoc
+// @Summary      List memories
+// @Description  Gets all memories for the authenticated user
+// @Tags         memories
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200      {array}   MemoryResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/memories [get]
+func GetMemories() {}
+
+// GetMemoryById godoc
+// @Summary      Get memory by ID
+// @Description  Returns information for a specific memory
+// @Tags         memories
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Memory ID"
+// @Success      200  {object}  MemoryResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/memories/{id} [get]
+func GetMemoryById() {}
+
+// CreateMemory godoc
+// @Summary      Create memory
+// @Description  Creates a new memory for the authenticated user
+// @Tags         memories
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        request  body      CreateMemoryRequest  true  "Memory data"
+// @Success      201      {object}  MemoryResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/memories [post]
+func CreateMemory() {}
+
+// UpdateMemory godoc
+// @Summary      Update memory
+// @Description  Updates information for an existing memory
+// @Tags         memories
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id       path      string               true  "Memory ID"
+// @Param        request  body      UpdateMemoryRequest  true  "Data to update"
+// @Success      200      {object}  MemoryResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Failure      404      {object}  ErrorResponse
+// @Router       /secure/memories/{id} [put]
+func UpdateMemory() {}
+
+// DeleteMemory godoc
+// @Summary      Delete memory
+// @Description  Permanently removes a memory
+// @Tags         memories
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Memory ID"
+// @Success      204
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/memories/{id} [delete]
+func DeleteMemory() {}
+
 type RegisterRequest struct {
 	Username    string `json:"username" example:"johndoe"`
 	DisplayName string `json:"display_name" example:"John Doe"`
@@ -193,4 +271,26 @@ type ErrorResponse struct {
 		Message string `json:"message" example:"Invalid input"`
 		Detail  string `json:"detail" example:"Email is required"`
 	} `json:"error"`
+}
+
+type MemoryResponse struct {
+	ID        string `json:"id" example:"abc123def456"`
+	Title     string `json:"title" example:"Summer Vacation 2024"`
+	Date      string `json:"date" example:"2024-07-15T00:00:00Z"`
+	IsPublic  bool   `json:"is_public" example:"false"`
+	CreatedAt string `json:"created_at" example:"2024-04-01T10:30:00Z"`
+	UpdatedAt string `json:"updated_at" example:"2024-04-02T15:45:00Z"`
+}
+
+type CreateMemoryRequest struct {
+	Title        string                            `json:"title" binding:"required"`
+	Date         utils.JSONTime                    `json:"date" binding:"required"`
+	IsPublic     bool                              `json:"is_public"`
+	Descriptions []models.CreateDescriptionRequest `json:"descriptions,omitempty"`
+}
+
+type UpdateMemoryRequest struct {
+	Title    string `json:"title,omitempty" example:"Updated Vacation Title"`
+	Date     string `json:"date,omitempty" example:"2024-07-20"`
+	IsPublic bool   `json:"is_public,omitempty" example:"true"`
 }

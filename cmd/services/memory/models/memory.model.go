@@ -46,6 +46,7 @@ type UpdateMemoryRequest struct {
 	Title    string         `json:"title,omitempty"`
 	Date     utils.JSONTime `json:"date,omitempty"`
 	IsPublic *bool          `json:"is_public,omitempty"`
+	Index    *int           `json:"index,omitempty"`
 }
 
 type CreateDescriptionRequest struct {
