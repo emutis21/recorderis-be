@@ -22,9 +22,13 @@ import (
 
 	"recorderis/cmd/services/repository"
 	repository_adapters "recorderis/cmd/services/repository/adapters/drivers"
+
+	location_driven_adapters "recorderis/cmd/services/location/adapters/drivens"
+	location_driver_adapters "recorderis/cmd/services/location/adapters/drivers"
+	location_ports "recorderis/cmd/services/location/ports/drivers"
 )
 
-func Compose() (api_ports.ForUser, auth_ports.ForAuth, memory_ports.ForMemory, auth_driven_ports.ForTokenManager, error) {
+func Compose() (api_ports.ForUser, auth_ports.ForAuth, memory_ports.ForMemory, auth_driven_ports.ForTokenManager, location_ports.ForLocation, error) {
 	ctx := context.Background()
 	cfg := config.LoadConfig()
 
@@ -33,7 +37,7 @@ func Compose() (api_ports.ForUser, auth_ports.ForAuth, memory_ports.ForMemory, a
 	if err != nil {
 		slog.Error("Failed to create repository", "error", err)
 
-		return nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, err
 	}
 
 	// Create repository drivers
@@ -75,7 +79,11 @@ func Compose() (api_ports.ForUser, auth_ports.ForAuth, memory_ports.ForMemory, a
 	memoryRepoAdapter := memory_driven_adapters.NewMemoryRepositoryAdapter(memoryManagerProxyAdapter)
 	memoryAdapter := memory_driver_adapters.NewMemoryAdapter(memoryRepoAdapter)
 
-	return userAdapter, authAdapter, memoryAdapter, tokenMgr, nil
+	locationManagerProxyAdapter := repository_adapters.NewLocationManagerProxyAdapter(ctx, repo)
+	locationRepoAdapter := location_driven_adapters.NewLocationRepositoryAdapter(locationManagerProxyAdapter)
+	locationAdapter := location_driver_adapters.NewLocationAdapter(locationRepoAdapter)
+
+	return userAdapter, authAdapter, memoryAdapter, tokenMgr, locationAdapter, nil
 }
 
 func ComposeMock() (api_ports.ForUser, error) {

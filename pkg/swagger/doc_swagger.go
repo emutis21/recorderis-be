@@ -293,6 +293,126 @@ func UpdateDescription() {}
 // @Router       /secure/memories/{id}/descriptions/{description_id} [delete]
 func DeleteDescription() {}
 
+// Location endpoints
+// --------------
+
+// GetLocations godoc
+// @Summary      List locations
+// @Description  Gets all locations
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200      {array}   LocationResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/locations [get]
+func GetLocations() {}
+
+// GetLocationById godoc
+// @Summary      Get location by ID
+// @Description  Returns information for a specific location
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Location ID"
+// @Success      200  {object}  LocationResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/locations/{id} [get]
+func GetLocationById() {}
+
+// CreateLocation godoc
+// @Summary      Create location
+// @Description  Creates a new location
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        request  body      CreateLocationRequest  true  "Location data"
+// @Success      201      {object}  LocationResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/locations [post]
+func CreateLocation() {}
+
+// UpdateLocation godoc
+// @Summary      Update location
+// @Description  Updates information for an existing location
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id       path      string                 true  "Location ID"
+// @Param        request  body      UpdateLocationRequest  true  "Data to update"
+// @Success      200      {object}  LocationResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Failure      404      {object}  ErrorResponse
+// @Router       /secure/locations/{id} [put]
+func UpdateLocation() {}
+
+// DeleteLocation godoc
+// @Summary      Delete location
+// @Description  Permanently removes a location
+// @Tags         locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Location ID"
+// @Success      204
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/locations/{id} [delete]
+func DeleteLocation() {}
+
+// Memory-Location relationship endpoints
+// ---------------------------------------
+
+// GetLocationsByMemoryID godoc
+// @Summary      List locations for a memory
+// @Description  Gets all locations associated with a specific memory
+// @Tags         memory-locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Memory ID"
+// @Success      200  {array}   LocationResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/memories/{id}/locations [get]
+func GetLocationsByMemoryID() {}
+
+// AssociateMemoryWithLocation godoc
+// @Summary      Associate memory with location
+// @Description  Associates a memory with an existing location
+// @Tags         memory-locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id          path      string  true  "Memory ID"
+// @Param        location_id path      string  true  "Location ID"
+// @Success      201         "Location associated with memory"
+// @Failure      401         {object}  ErrorResponse
+// @Failure      404         {object}  ErrorResponse
+// @Router       /secure/memories/{id}/locations/{location_id} [post]
+func AssociateMemoryWithLocation() {}
+
+// DisassociateMemoryFromLocation godoc
+// @Summary      Remove location from memory
+// @Description  Removes the association between a memory and a location
+// @Tags         memory-locations
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id          path      string  true  "Memory ID"
+// @Param        location_id path      string  true  "Location ID"
+// @Success      204
+// @Failure      401         {object}  ErrorResponse
+// @Failure      404         {object}  ErrorResponse
+// @Router       /secure/memories/{id}/locations/{location_id} [delete]
+func DisassociateMemoryFromLocation() {}
+
 type RegisterRequest struct {
 	Username    string `json:"username" example:"johndoe"`
 	DisplayName string `json:"display_name" example:"John Doe"`
@@ -391,4 +511,30 @@ type CreateDescriptionRequest struct {
 type UpdateDescriptionRequest struct {
 	Text  string `json:"text,omitempty" example:"Updated description text"`
 	Index *int   `json:"index,omitempty" example:"1"`
+}
+
+type LocationResponse struct {
+	ID         string  `json:"id" example:"abc123def456"`
+	LocationID string  `json:"location_id" example:"xyz789"`
+	Location   string  `json:"location" example:"Playa del Carmen"`
+	Longitude  float64 `json:"longitude" example:"-87.0739"`
+	Latitude   float64 `json:"latitude" example:"20.6296"`
+	City       string  `json:"city" example:"Playa del Carmen"`
+	Country    string  `json:"country" example:"Mexico"`
+}
+
+type CreateLocationRequest struct {
+	Location  string  `json:"location" binding:"required" example:"Playa del Carmen"`
+	Longitude float64 `json:"longitude" binding:"required" example:"-87.0739"`
+	Latitude  float64 `json:"latitude" binding:"required" example:"20.6296"`
+	City      string  `json:"city" binding:"required" example:"Playa del Carmen"`
+	Country   string  `json:"country" binding:"required" example:"Mexico"`
+}
+
+type UpdateLocationRequest struct {
+	Location  string   `json:"location,omitempty" example:"Updated Beach Name"`
+	Longitude *float64 `json:"longitude,omitempty" example:"-87.0740"`
+	Latitude  *float64 `json:"latitude,omitempty" example:"20.6297"`
+	City      string   `json:"city,omitempty" example:"Playa del Carmen"`
+	Country   string   `json:"country,omitempty" example:"Mexico"`
 }

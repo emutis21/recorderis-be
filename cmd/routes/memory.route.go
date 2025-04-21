@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"recorderis/cmd/middleware"
+	location_ports "recorderis/cmd/services/location/ports/drivers"
 	"recorderis/cmd/services/memory/models"
 	memory_ports "recorderis/cmd/services/memory/ports/drivers"
 	"recorderis/internals/constants"
@@ -12,10 +13,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory, authMiddleware *middleware.AuthMiddleware) {
+func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory, locationAdapter location_ports.ForLocation, authMiddleware *middleware.AuthMiddleware) {
 	memoryRoutes := router.Group(constants.APIPathV1 + constants.SecurePath + constants.MemoriesPath)
 	memoryRoutes.Use(authMiddleware.RequireAuth())
 	descriptionRoutes := memoryRoutes.Group(constants.IDParam + constants.DescriptionsPath)
+	locationRoutes := memoryRoutes.Group(constants.IDParam + "/locations")
 
 	memoryRoutes.GET("", func(c *gin.Context) {
 		h := utils.NewHandler(c)
@@ -151,10 +153,10 @@ func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory,
 		h.OK(description, utils.MsgRetrieved)
 	})
 
-descriptionRoutes.PUT(constants.DescriptionIDParam, func(c *gin.Context) {
-    h := utils.NewHandler(c)
-    memoryID := c.Param("id")
-    descriptionID := c.Param("description_id")
+	descriptionRoutes.PUT(constants.DescriptionIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		descriptionID := c.Param("description_id")
 		var req models.UpdateDescriptionRequest
 
 		if err := c.ShouldBindJSON(&req); err != nil {
@@ -177,6 +179,50 @@ descriptionRoutes.PUT(constants.DescriptionIDParam, func(c *gin.Context) {
 		descriptionID := c.Param("description_id")
 
 		err := memoryAdapter.DeleteDescription(c.Request.Context(), memoryID, descriptionID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.NoContent()
+	})
+
+	// GET /api/v1/secure/memories/:id/locations
+	locationRoutes.GET("", func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+
+		locations, err := locationAdapter.GetLocationsByMemoryID(c.Request.Context(), memoryID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.OK(locations, utils.MsgRetrieved)
+	})
+
+	// POST /api/v1/secure/memories/:id/locations/:location_id
+	locationRoutes.POST(constants.LocationIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		locationID := c.Param("location_id")
+
+		err := locationAdapter.AssociateMemoryWithLocation(c.Request.Context(), memoryID, locationID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.Created(nil, "Location associated with memory")
+	})
+
+	// DELETE /api/v1/secure/memories/:id/locations/:location_id
+	locationRoutes.DELETE(constants.LocationIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		locationID := c.Param("location_id")
+
+		err := locationAdapter.DisassociateMemoryFromLocation(c.Request.Context(), memoryID, locationID)
 		if err != nil {
 			h.Error(err)
 			return

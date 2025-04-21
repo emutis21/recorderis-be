@@ -37,6 +37,15 @@ const (
 	DescriptionIDParam = "/:description_id"
 )
 
+// Location paths
+const (
+	LocationsPath       = "/locations"
+	LocationPath        = "/location"
+	LocationIDPath      = "/:location_id"
+	LocationsByMemoryID = "/:id/locations"
+	LocationIDParam     = "/:location_id"
+)
+
 type ContextKey string
 
 // Context keys

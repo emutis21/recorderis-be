@@ -33,6 +33,8 @@ func NewRepository() (*Repository, error) {
 		&models.Memory{},
 		&models.Description{},
 		&models.Photo{},
+		&models.Location{},
+		&models.MemoryLocation{},
 	)
 
 	if err != nil {
@@ -339,4 +341,178 @@ func (r *Repository) DeleteDescription(ctx context.Context, memoryID string, des
 	}
 
 	return nil
+}
+
+/* locations & memory_locations */
+func (r *Repository) GetLocations(ctx context.Context) ([]models.Location, error) {
+	var locations []models.Location
+
+	result := r.db.Find(&locations)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch locations", result.Error)
+	}
+
+	return locations, nil
+}
+
+func (r *Repository) GetLocationByID(ctx context.Context, locationID string) (*models.Location, error) {
+	var location models.Location
+
+	result := r.db.Where("location_id = ?", locationID).First(&location)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("Location not found", result.Error)
+		}
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch location", result.Error)
+	}
+
+	return &location, nil
+}
+
+func (r *Repository) CreateLocation(ctx context.Context, location *models.Location) error {
+	if result := r.db.Create(location); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to create location", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) UpdateLocation(ctx context.Context, location *models.Location) error {
+	var existingLocation models.Location
+	if err := r.db.Where("location_id = ?", location.LocationID).First(&existingLocation).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Location not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch location", err)
+	}
+
+	if location.Location != "" {
+		existingLocation.Location = location.Location
+	}
+	if location.Longitude != 0.0 {
+		existingLocation.Longitude = location.Longitude
+	}
+	if location.Latitude != 0.0 {
+		existingLocation.Latitude = location.Latitude
+	}
+	if location.City != "" {
+		existingLocation.City = location.City
+	}
+	if location.Country != "" {
+		existingLocation.Country = location.Country
+	}
+
+	if result := r.db.Save(&existingLocation); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to update location", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DeleteLocation(ctx context.Context, locationID string) error {
+	var location models.Location
+	if err := r.db.Where("location_id = ?", locationID).First(&location).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Location not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch location", err)
+	}
+
+	result := r.db.Delete(&location)
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to delete location", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) AssociateMemoryWithLocation(ctx context.Context, memoryID string, locationID string) error {
+	var memory models.Memory
+	if err := r.db.Where("memory_id = ?", memoryID).First(&memory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	var location models.Location
+	if err := r.db.Where("location_id = ?", locationID).First(&location).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Location not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch location", err)
+	}
+
+	memoryLocation := models.MemoryLocation{
+		MemoryID:   memory.MemoryID,
+		LocationID: location.LocationID,
+	}
+
+	if result := r.db.Create(&memoryLocation); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to associate memory with location", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DisassociateMemoryFromLocation(ctx context.Context, memoryID string, locationID string) error {
+	var memory models.Memory
+	if err := r.db.Where("memory_id = ?", memoryID).First(&memory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	var location models.Location
+	if err := r.db.Where("location_id = ?", locationID).First(&location).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Location not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch location", err)
+	}
+
+	result := r.db.Where("memory_id = ? AND location_id = ?", memory.MemoryID, location.LocationID).Delete(&models.MemoryLocation{})
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to disassociate memory from location", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) GetLocationsByMemoryID(ctx context.Context, memoryID string) ([]models.Location, error) {
+	var locations []models.Location
+
+	result := r.db.Table("locations").
+		Joins("JOIN memory_locations ON memory_locations.location_id = locations.location_id").
+		Where("memory_locations.memory_id = ?", memoryID).
+		Find(&locations)
+
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch locations", result.Error)
+	}
+
+	return locations, nil
+}
+
+func (r *Repository) GetMemoriesByLocationID(ctx context.Context, locationID string) ([]string, error) {
+	var memoryLocations []models.MemoryLocation
+	var memoryIDs []string
+
+	result := r.db.Where("location_id = ?", locationID).Find(&memoryLocations)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch memories", result.Error)
+	}
+
+	for _, memoryLocation := range memoryLocations {
+		memoryIDs = append(memoryIDs, memoryLocation.MemoryID)
+	}
+
+	return memoryIDs, nil
 }
