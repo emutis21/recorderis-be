@@ -41,3 +41,24 @@ func (a *MemoryAdapter) UpdateMemory(ctx context.Context, memoryID string, req *
 func (a *MemoryAdapter) DeleteMemory(ctx context.Context, memoryID string) error {
 	return a.memoryRepo.DeleteMemory(ctx, memoryID)
 }
+
+/* descriptions */
+func (a *MemoryAdapter) GetDescriptions(ctx context.Context, memoryID string) ([]models.DescriptionResponse, error) {
+	return a.memoryRepo.GetDescriptions(ctx, memoryID)
+}
+
+func (a *MemoryAdapter) GetDescriptionByID(ctx context.Context, memoryID string, descriptionID string) (*models.DescriptionResponse, error) {
+	return a.memoryRepo.GetDescriptionByID(ctx, memoryID, descriptionID)
+}
+
+func (a *MemoryAdapter) CreateDescription(ctx context.Context, memoryID string, req *models.CreateDescriptionRequest) (*models.DescriptionResponse, error) {
+	return a.memoryRepo.CreateDescription(ctx, memoryID, req)
+}
+
+func (a *MemoryAdapter) UpdateDescription(ctx context.Context, memoryID string, descriptionID string, req *models.UpdateDescriptionRequest) (*models.DescriptionResponse, error) {
+	return a.memoryRepo.UpdateDescription(ctx, memoryID, descriptionID, req)
+}
+
+func (a *MemoryAdapter) DeleteDescription(ctx context.Context, memoryID string, descriptionID string) error {
+	return a.memoryRepo.DeleteDescription(ctx, memoryID, descriptionID)
+}

@@ -129,13 +129,7 @@ func mapMemoryToResponse(memory *repo_models.Memory) models.MemoryResponse {
 
 	if memory.Descriptions != nil {
 		for _, desc := range memory.Descriptions {
-			response.Descriptions = append(response.Descriptions, models.DescriptionResponse{
-				ID:            strconv.Itoa(desc.ID),
-				DescriptionID: desc.DescriptionID,
-				Text:          desc.Text,
-				Index:         desc.Index,
-				Version:       desc.Version,
-			})
+			response.Descriptions = append(response.Descriptions, mapDescriptionToResponse(desc))
 		}
 	}
 
@@ -152,4 +146,88 @@ func mapMemoryToResponse(memory *repo_models.Memory) models.MemoryResponse {
 	}
 
 	return response
+}
+
+func (a *MemoryRepositoryAdapter) GetDescriptions(ctx context.Context, memoryID string) ([]models.DescriptionResponse, error) {
+	descriptions, err := a.memoryRepo.GetDescriptions(ctx, memoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	responses := make([]models.DescriptionResponse, 0, len(descriptions))
+	for _, desc := range descriptions {
+		responses = append(responses, mapDescriptionToResponse(&desc))
+	}
+
+	return responses, nil
+}
+
+func (a *MemoryRepositoryAdapter) GetDescriptionByID(ctx context.Context, memoryID string, descriptionID string) (*models.DescriptionResponse, error) {
+	description, err := a.memoryRepo.GetDescriptionByID(ctx, memoryID, descriptionID)
+	if err != nil {
+		return nil, err
+	}
+
+	response := mapDescriptionToResponse(description)
+	return &response, nil
+}
+
+func (a *MemoryRepositoryAdapter) CreateDescription(ctx context.Context, memoryID string, req *models.CreateDescriptionRequest) (*models.DescriptionResponse, error) {
+	_, err := a.memoryRepo.GetMemoryByMemoryID(ctx, memoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	description := &repo_models.Description{
+		MemoryID: memoryID,
+		Text:     req.Text,
+		Index:    req.Index,
+	}
+
+	createdDescription, err := a.memoryRepo.CreateDescription(ctx, memoryID, description)
+	if err != nil {
+		return nil, err
+	}
+
+	response := mapDescriptionToResponse(createdDescription)
+	return &response, nil
+}
+
+func (a *MemoryRepositoryAdapter) UpdateDescription(ctx context.Context, memoryID string, descriptionID string, req *models.UpdateDescriptionRequest) (*models.DescriptionResponse, error) {
+	description, err := a.memoryRepo.GetDescriptionByID(ctx, memoryID, descriptionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.Text != "" {
+		description.Text = req.Text
+	}
+
+	if req.Index != nil {
+		description.Index = *req.Index
+	}
+
+	description.DescriptionID = descriptionID
+
+	updatedDescription, err := a.memoryRepo.UpdateDescription(ctx, memoryID, description)
+	if err != nil {
+		return nil, err
+	}
+
+	response := mapDescriptionToResponse(updatedDescription)
+	return &response, nil
+}
+
+func (a *MemoryRepositoryAdapter) DeleteDescription(ctx context.Context, memoryID string, descriptionID string) error {
+	return a.memoryRepo.DeleteDescription(ctx, memoryID, descriptionID)
+}
+
+func mapDescriptionToResponse(description *repo_models.Description) models.DescriptionResponse {
+	return models.DescriptionResponse{
+		ID:            strconv.Itoa(description.ID),
+		DescriptionID: description.DescriptionID,
+		Text:          description.Text,
+		Index:         description.Index,
+		Version:       description.Version,
+	}
 }

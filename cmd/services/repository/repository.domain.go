@@ -190,7 +190,7 @@ func (r *Repository) GetMemories(ctx context.Context, userID string) ([]models.M
 func (r *Repository) GetMemoryByMemoryID(ctx context.Context, memoryID string) (*models.Memory, error) {
 	var memory models.Memory
 
-	result := r.db.Where("memory_id = ?", memoryID).First(&memory)
+	result := r.db.Where("memory_id = ?", memoryID).First(&memory).Preload("Descriptions").Preload("Photos")
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			return nil, errors.NewNotFoundError("Memory not found", result.Error)
@@ -259,6 +259,81 @@ func (r *Repository) DeleteMemory(ctx context.Context, memoryID string) error {
 	result := r.db.Delete(&memory)
 	if result.Error != nil {
 		return errors.NewError(errors.ErrDatabase, "Failed to delete memory", result.Error)
+	}
+
+	return nil
+}
+
+/* descriptions */
+func (r *Repository) GetDescriptions(ctx context.Context, memoryID string) ([]models.Description, error) {
+	var descriptions []models.Description
+
+	result := r.db.Where("memory_id = ?", memoryID).Find(&descriptions)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch descriptions", result.Error)
+	}
+
+	return descriptions, nil
+}
+
+func (r *Repository) GetDescriptionByID(ctx context.Context, memoryID string, descriptionID string) (*models.Description, error) {
+	var description models.Description
+
+	result := r.db.Where("memory_id = ? AND description_id = ?", memoryID, descriptionID).First(&description)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("Description not found", result.Error)
+		}
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch description", result.Error)
+	}
+
+	return &description, nil
+}
+
+func (r *Repository) CreateDescription(ctx context.Context, memoryID string, description *models.Description) error {
+	if result := r.db.Create(description); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to create description", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) UpdateDescription(ctx context.Context, memoryID string, description *models.Description) error {
+	var existingDescription models.Description
+	if err := r.db.Where("memory_id = ? AND description_id = ?", memoryID, description.DescriptionID).First(&existingDescription).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Description not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch description", err)
+	}
+
+	if description.Text != "" {
+		existingDescription.Text = description.Text
+	}
+
+	existingDescription.Version++
+
+	if result := r.db.Save(&existingDescription); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to update description", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DeleteDescription(ctx context.Context, memoryID string, descriptionID string) error {
+	var description models.Description
+	if err := r.db.Where("memory_id = ? AND description_id = ?", memoryID, descriptionID).First(&description).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Description not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch description", err)
+	}
+
+	result := r.db.Delete(&description)
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to delete description", result.Error)
 	}
 
 	return nil

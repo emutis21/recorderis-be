@@ -16,7 +16,7 @@ type Description struct {
 	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time `gorm:"autoUpdateTime"`
 	DeletedAt     gorm.DeletedAt
-	Version       int `gorm:"not null;default:1"`
+	Version       int `gorm:"default:1;not null"`
 
 	Memory *Memory `gorm:"foreignKey:MemoryID;references:MemoryID"`
 }
