@@ -43,7 +43,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.LoginRequest"
+                            "$ref": "#/definitions/pkg_swagger.LoginRequest"
                         }
                     }
                 ],
@@ -51,19 +51,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.TokenResponse"
+                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -95,13 +95,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.TokenResponse"
+                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -127,7 +127,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.RegisterRequest"
+                            "$ref": "#/definitions/pkg_swagger.RegisterRequest"
                         }
                     }
                 ],
@@ -135,13 +135,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/swagger.TokenResponse"
+                            "$ref": "#/definitions/pkg_swagger.TokenResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -169,13 +169,254 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.SuccessResponse"
+                            "$ref": "#/definitions/pkg_swagger.SuccessResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/secure/locations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets all locations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "List locations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg_swagger.LocationResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "Create location",
+                "parameters": [
+                    {
+                        "description": "Location data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.CreateLocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.LocationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/secure/locations/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns information for a specific location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "Get location by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.LocationResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates information for an existing location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "Update location",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.UpdateLocationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.LocationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permanently removes a location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "locations"
+                ],
+                "summary": "Delete location",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -205,14 +446,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/swagger.MemoryResponse"
+                                "$ref": "#/definitions/pkg_swagger.MemoryResponse"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -241,7 +482,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.CreateMemoryRequest"
+                            "$ref": "#/definitions/pkg_swagger.CreateMemoryRequest"
                         }
                     }
                 ],
@@ -249,19 +490,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/swagger.MemoryResponse"
+                            "$ref": "#/definitions/pkg_swagger.MemoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -298,19 +539,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.MemoryResponse"
+                            "$ref": "#/definitions/pkg_swagger.MemoryResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -346,7 +587,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.UpdateMemoryRequest"
+                            "$ref": "#/definitions/pkg_swagger.UpdateMemoryRequest"
                         }
                     }
                 ],
@@ -354,25 +595,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.MemoryResponse"
+                            "$ref": "#/definitions/pkg_swagger.MemoryResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -410,13 +651,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -455,20 +696,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/swagger.DescriptionResponse"
+                                "$ref": "#/definitions/pkg_swagger.DescriptionResponse"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -504,7 +745,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.CreateDescriptionRequest"
+                            "$ref": "#/definitions/pkg_swagger.CreateDescriptionRequest"
                         }
                     }
                 ],
@@ -512,25 +753,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                            "$ref": "#/definitions/pkg_swagger.DescriptionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -574,19 +815,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                            "$ref": "#/definitions/pkg_swagger.DescriptionResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -629,7 +870,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.UpdateDescriptionRequest"
+                            "$ref": "#/definitions/pkg_swagger.UpdateDescriptionRequest"
                         }
                     }
                 ],
@@ -637,25 +878,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                            "$ref": "#/definitions/pkg_swagger.DescriptionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -700,13 +941,169 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/secure/memories/{id}/locations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets all locations associated with a specific memory",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "memory-locations"
+                ],
+                "summary": "List locations for a memory",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/pkg_swagger.LocationResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/secure/memories/{id}/locations/{location_id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Associates a memory with an existing location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "memory-locations"
+                ],
+                "summary": "Associate memory with location",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "location_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Location associated with memory"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Removes the association between a memory and a location",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "memory-locations"
+                ],
+                "summary": "Remove location from memory",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "location_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -736,14 +1133,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/swagger.UserResponse"
+                                "$ref": "#/definitions/pkg_swagger.UserResponse"
                             }
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -772,7 +1169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.CreateUserRequest"
+                            "$ref": "#/definitions/pkg_swagger.CreateUserRequest"
                         }
                     }
                 ],
@@ -780,19 +1177,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/swagger.UserResponse"
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -820,13 +1217,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.UserResponse"
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -864,7 +1261,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/swagger.UpdateUserRequest"
+                            "$ref": "#/definitions/pkg_swagger.UpdateUserRequest"
                         }
                     }
                 ],
@@ -872,25 +1269,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.UserResponse"
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -928,13 +1325,13 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -966,13 +1363,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.UserResponse"
+                            "$ref": "#/definitions/pkg_swagger.UserResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/swagger.ErrorResponse"
+                            "$ref": "#/definitions/pkg_swagger.ErrorResponse"
                         }
                     }
                 }
@@ -980,21 +1377,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.CreateDescriptionRequest": {
-            "type": "object",
-            "required": [
-                "text"
-            ],
-            "properties": {
-                "index": {
-                    "type": "integer"
-                },
-                "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "swagger.CreateDescriptionRequest": {
+        "pkg_swagger.CreateDescriptionRequest": {
             "type": "object",
             "required": [
                 "index",
@@ -1011,7 +1394,39 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.CreateMemoryRequest": {
+        "pkg_swagger.CreateLocationRequest": {
+            "type": "object",
+            "required": [
+                "city",
+                "country",
+                "latitude",
+                "location",
+                "longitude"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "example": "Playa del Carmen"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "Mexico"
+                },
+                "latitude": {
+                    "type": "number",
+                    "example": 20.6296
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Playa del Carmen"
+                },
+                "longitude": {
+                    "type": "number",
+                    "example": -87.0739
+                }
+            }
+        },
+        "pkg_swagger.CreateMemoryRequest": {
             "type": "object",
             "required": [
                 "date",
@@ -1024,7 +1439,7 @@ const docTemplate = `{
                 "descriptions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.CreateDescriptionRequest"
+                        "$ref": "#/definitions/recorderis_cmd_services_memory_models.CreateDescriptionRequest"
                     }
                 },
                 "is_public": {
@@ -1035,7 +1450,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.CreateUserRequest": {
+        "pkg_swagger.CreateUserRequest": {
             "type": "object",
             "properties": {
                 "display_name": {
@@ -1060,7 +1475,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.DescriptionResponse": {
+        "pkg_swagger.DescriptionResponse": {
             "type": "object",
             "properties": {
                 "description_id": {
@@ -1085,7 +1500,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.ErrorResponse": {
+        "pkg_swagger.ErrorResponse": {
             "type": "object",
             "properties": {
                 "error": {
@@ -1115,7 +1530,40 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.LoginRequest": {
+        "pkg_swagger.LocationResponse": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "example": "Playa del Carmen"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "Mexico"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "abc123def456"
+                },
+                "latitude": {
+                    "type": "number",
+                    "example": 20.6296
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Playa del Carmen"
+                },
+                "location_id": {
+                    "type": "string",
+                    "example": "xyz789"
+                },
+                "longitude": {
+                    "type": "number",
+                    "example": -87.0739
+                }
+            }
+        },
+        "pkg_swagger.LoginRequest": {
             "type": "object",
             "properties": {
                 "device_type": {
@@ -1136,7 +1584,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.MemoryResponse": {
+        "pkg_swagger.MemoryResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -1165,7 +1613,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.RegisterRequest": {
+        "pkg_swagger.RegisterRequest": {
             "type": "object",
             "properties": {
                 "device_type": {
@@ -1190,7 +1638,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.SuccessResponse": {
+        "pkg_swagger.SuccessResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -1204,7 +1652,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.TokenResponse": {
+        "pkg_swagger.TokenResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -1225,7 +1673,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.UpdateDescriptionRequest": {
+        "pkg_swagger.UpdateDescriptionRequest": {
             "type": "object",
             "properties": {
                 "index": {
@@ -1238,7 +1686,32 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.UpdateMemoryRequest": {
+        "pkg_swagger.UpdateLocationRequest": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string",
+                    "example": "Playa del Carmen"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "Mexico"
+                },
+                "latitude": {
+                    "type": "number",
+                    "example": 20.6297
+                },
+                "location": {
+                    "type": "string",
+                    "example": "Updated Beach Name"
+                },
+                "longitude": {
+                    "type": "number",
+                    "example": -87.074
+                }
+            }
+        },
+        "pkg_swagger.UpdateMemoryRequest": {
             "type": "object",
             "properties": {
                 "date": {
@@ -1255,7 +1728,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.UpdateUserRequest": {
+        "pkg_swagger.UpdateUserRequest": {
             "type": "object",
             "properties": {
                 "display_name": {
@@ -1272,7 +1745,7 @@ const docTemplate = `{
                 }
             }
         },
-        "swagger.UserResponse": {
+        "pkg_swagger.UserResponse": {
             "type": "object",
             "properties": {
                 "display_name": {
@@ -1294,6 +1767,20 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "johndoe"
+                }
+            }
+        },
+        "recorderis_cmd_services_memory_models.CreateDescriptionRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "index": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
                 }
             }
         }

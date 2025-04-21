@@ -1,15 +1,6 @@
 basePath: /api/v1
 definitions:
-  models.CreateDescriptionRequest:
-    properties:
-      index:
-        type: integer
-      text:
-        type: string
-    required:
-    - text
-    type: object
-  swagger.CreateDescriptionRequest:
+  pkg_swagger.CreateDescriptionRequest:
     properties:
       index:
         example: 0
@@ -21,13 +12,37 @@ definitions:
     - index
     - text
     type: object
-  swagger.CreateMemoryRequest:
+  pkg_swagger.CreateLocationRequest:
+    properties:
+      city:
+        example: Playa del Carmen
+        type: string
+      country:
+        example: Mexico
+        type: string
+      latitude:
+        example: 20.6296
+        type: number
+      location:
+        example: Playa del Carmen
+        type: string
+      longitude:
+        example: -87.0739
+        type: number
+    required:
+    - city
+    - country
+    - latitude
+    - location
+    - longitude
+    type: object
+  pkg_swagger.CreateMemoryRequest:
     properties:
       date:
         type: string
       descriptions:
         items:
-          $ref: '#/definitions/models.CreateDescriptionRequest'
+          $ref: '#/definitions/recorderis_cmd_services_memory_models.CreateDescriptionRequest'
         type: array
       is_public:
         type: boolean
@@ -37,7 +52,7 @@ definitions:
     - date
     - title
     type: object
-  swagger.CreateUserRequest:
+  pkg_swagger.CreateUserRequest:
     properties:
       display_name:
         example: New User
@@ -55,7 +70,7 @@ definitions:
         example: newuser
         type: string
     type: object
-  swagger.DescriptionResponse:
+  pkg_swagger.DescriptionResponse:
     properties:
       description_id:
         example: abc-xyz-123
@@ -73,7 +88,7 @@ definitions:
         example: 1
         type: integer
     type: object
-  swagger.ErrorResponse:
+  pkg_swagger.ErrorResponse:
     properties:
       error:
         properties:
@@ -94,7 +109,31 @@ definitions:
         example: false
         type: boolean
     type: object
-  swagger.LoginRequest:
+  pkg_swagger.LocationResponse:
+    properties:
+      city:
+        example: Playa del Carmen
+        type: string
+      country:
+        example: Mexico
+        type: string
+      id:
+        example: abc123def456
+        type: string
+      latitude:
+        example: 20.6296
+        type: number
+      location:
+        example: Playa del Carmen
+        type: string
+      location_id:
+        example: xyz789
+        type: string
+      longitude:
+        example: -87.0739
+        type: number
+    type: object
+  pkg_swagger.LoginRequest:
     properties:
       device_type:
         example: web
@@ -109,7 +148,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  swagger.MemoryResponse:
+  pkg_swagger.MemoryResponse:
     properties:
       created_at:
         example: "2024-04-01T10:30:00Z"
@@ -130,7 +169,7 @@ definitions:
         example: "2024-04-02T15:45:00Z"
         type: string
     type: object
-  swagger.RegisterRequest:
+  pkg_swagger.RegisterRequest:
     properties:
       device_type:
         example: web
@@ -148,7 +187,7 @@ definitions:
         example: johndoe
         type: string
     type: object
-  swagger.SuccessResponse:
+  pkg_swagger.SuccessResponse:
     properties:
       data: {}
       message:
@@ -158,7 +197,7 @@ definitions:
         example: true
         type: boolean
     type: object
-  swagger.TokenResponse:
+  pkg_swagger.TokenResponse:
     properties:
       access_token:
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -173,7 +212,7 @@ definitions:
         example: Bearer
         type: string
     type: object
-  swagger.UpdateDescriptionRequest:
+  pkg_swagger.UpdateDescriptionRequest:
     properties:
       index:
         example: 1
@@ -182,7 +221,25 @@ definitions:
         example: Updated description text
         type: string
     type: object
-  swagger.UpdateMemoryRequest:
+  pkg_swagger.UpdateLocationRequest:
+    properties:
+      city:
+        example: Playa del Carmen
+        type: string
+      country:
+        example: Mexico
+        type: string
+      latitude:
+        example: 20.6297
+        type: number
+      location:
+        example: Updated Beach Name
+        type: string
+      longitude:
+        example: -87.074
+        type: number
+    type: object
+  pkg_swagger.UpdateMemoryRequest:
     properties:
       date:
         example: "2024-07-20"
@@ -194,7 +251,7 @@ definitions:
         example: Updated Vacation Title
         type: string
     type: object
-  swagger.UpdateUserRequest:
+  pkg_swagger.UpdateUserRequest:
     properties:
       display_name:
         example: Updated Name
@@ -206,7 +263,7 @@ definitions:
         example: newsecurepassword
         type: string
     type: object
-  swagger.UserResponse:
+  pkg_swagger.UserResponse:
     properties:
       display_name:
         example: John Doe
@@ -223,6 +280,15 @@ definitions:
       username:
         example: johndoe
         type: string
+    type: object
+  recorderis_cmd_services_memory_models.CreateDescriptionRequest:
+    properties:
+      index:
+        type: integer
+      text:
+        type: string
+    required:
+    - text
     type: object
 host: localhost:4000
 info:
@@ -248,22 +314,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.LoginRequest'
+          $ref: '#/definitions/pkg_swagger.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.TokenResponse'
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       summary: User login
       tags:
       - auth
@@ -284,11 +350,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.TokenResponse'
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       summary: Refresh token
       tags:
       - auth
@@ -303,18 +369,18 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.RegisterRequest'
+          $ref: '#/definitions/pkg_swagger.RegisterRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/swagger.TokenResponse'
+            $ref: '#/definitions/pkg_swagger.TokenResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       summary: Register a new user
       tags:
       - auth
@@ -329,16 +395,169 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.SuccessResponse'
+            $ref: '#/definitions/pkg_swagger.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Logout
       tags:
       - auth
+  /secure/locations:
+    get:
+      consumes:
+      - application/json
+      description: Gets all locations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg_swagger.LocationResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List locations
+      tags:
+      - locations
+    post:
+      consumes:
+      - application/json
+      description: Creates a new location
+      parameters:
+      - description: Location data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.CreateLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pkg_swagger.LocationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create location
+      tags:
+      - locations
+  /secure/locations/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes a location
+      parameters:
+      - description: Location ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete location
+      tags:
+      - locations
+    get:
+      consumes:
+      - application/json
+      description: Returns information for a specific location
+      parameters:
+      - description: Location ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.LocationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get location by ID
+      tags:
+      - locations
+    put:
+      consumes:
+      - application/json
+      description: Updates information for an existing location
+      parameters:
+      - description: Location ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.UpdateLocationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.LocationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update location
+      tags:
+      - locations
   /secure/memories:
     get:
       consumes:
@@ -351,12 +570,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/swagger.MemoryResponse'
+              $ref: '#/definitions/pkg_swagger.MemoryResponse'
             type: array
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List memories
@@ -372,22 +591,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.CreateMemoryRequest'
+          $ref: '#/definitions/pkg_swagger.CreateMemoryRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/swagger.MemoryResponse'
+            $ref: '#/definitions/pkg_swagger.MemoryResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create memory
@@ -412,11 +631,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete memory
@@ -438,15 +657,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.MemoryResponse'
+            $ref: '#/definitions/pkg_swagger.MemoryResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get memory by ID
@@ -467,26 +686,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.UpdateMemoryRequest'
+          $ref: '#/definitions/pkg_swagger.UpdateMemoryRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.MemoryResponse'
+            $ref: '#/definitions/pkg_swagger.MemoryResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update memory
@@ -510,16 +729,16 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/swagger.DescriptionResponse'
+              $ref: '#/definitions/pkg_swagger.DescriptionResponse'
             type: array
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List descriptions
@@ -540,26 +759,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.CreateDescriptionRequest'
+          $ref: '#/definitions/pkg_swagger.CreateDescriptionRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/swagger.DescriptionResponse'
+            $ref: '#/definitions/pkg_swagger.DescriptionResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create description
@@ -589,11 +808,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete description
@@ -620,15 +839,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.DescriptionResponse'
+            $ref: '#/definitions/pkg_swagger.DescriptionResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get description by ID
@@ -654,31 +873,131 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.UpdateDescriptionRequest'
+          $ref: '#/definitions/pkg_swagger.UpdateDescriptionRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.DescriptionResponse'
+            $ref: '#/definitions/pkg_swagger.DescriptionResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update description
       tags:
       - descriptions
+  /secure/memories/{id}/locations:
+    get:
+      consumes:
+      - application/json
+      description: Gets all locations associated with a specific memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg_swagger.LocationResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List locations for a memory
+      tags:
+      - memory-locations
+  /secure/memories/{id}/locations/{location_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes the association between a memory and a location
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Location ID
+        in: path
+        name: location_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove location from memory
+      tags:
+      - memory-locations
+    post:
+      consumes:
+      - application/json
+      description: Associates a memory with an existing location
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Location ID
+        in: path
+        name: location_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Location associated with memory
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Associate memory with location
+      tags:
+      - memory-locations
   /secure/users:
     get:
       consumes:
@@ -691,12 +1010,12 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/swagger.UserResponse'
+              $ref: '#/definitions/pkg_swagger.UserResponse'
             type: array
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: List users
@@ -712,22 +1031,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.CreateUserRequest'
+          $ref: '#/definitions/pkg_swagger.CreateUserRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/swagger.UserResponse'
+            $ref: '#/definitions/pkg_swagger.UserResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Create user
@@ -752,11 +1071,11 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Delete user
@@ -777,26 +1096,26 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/swagger.UpdateUserRequest'
+          $ref: '#/definitions/pkg_swagger.UpdateUserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.UserResponse'
+            $ref: '#/definitions/pkg_swagger.UserResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Update user
@@ -813,11 +1132,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.UserResponse'
+            $ref: '#/definitions/pkg_swagger.UserResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       security:
       - BearerAuth: []
       summary: Get current user profile
@@ -840,11 +1159,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.UserResponse'
+            $ref: '#/definitions/pkg_swagger.UserResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/swagger.ErrorResponse'
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
       summary: Get user by ID
       tags:
       - users

@@ -24,6 +24,7 @@ type Memory struct {
 	User         *User          `gorm:"foreignKey:UserID;references:UserID"`
 	Descriptions []*Description `gorm:"foreignKey:MemoryID;references:MemoryID"`
 	Photos       []*Photo       `gorm:"foreignKey:MemoryID;references:MemoryID"`
+	Locations    []Location     `gorm:"many2many:memory_locations;foreignKey:MemoryID;joinForeignKey:MemoryID;References:LocationID;joinReferences:LocationID"`
 }
 
 func (m *Memory) BeforeCreate(tx *gorm.DB) error {
