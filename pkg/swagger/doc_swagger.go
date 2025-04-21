@@ -213,6 +213,86 @@ func UpdateMemory() {}
 // @Router       /secure/memories/{id} [delete]
 func DeleteMemory() {}
 
+// Description endpoints
+// --------------
+
+// GetDescriptions godoc
+// @Summary      List descriptions
+// @Description  Gets all descriptions for a specific memory
+// @Tags         descriptions
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Memory ID"
+// @Success      200  {array}   DescriptionResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/memories/{id}/descriptions [get]
+func GetDescriptions() {}
+
+// GetDescriptionByID godoc
+// @Summary      Get description by ID
+// @Description  Returns information for a specific description
+// @Tags         descriptions
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id             path      string  true  "Memory ID"
+// @Param        description_id path      string  true  "Description ID"
+// @Success      200            {object}  DescriptionResponse
+// @Failure      401            {object}  ErrorResponse
+// @Failure      404            {object}  ErrorResponse
+// @Router       /secure/memories/{id}/descriptions/{description_id} [get]
+func GetDescriptionByID() {}
+
+// CreateDescription godoc
+// @Summary      Create description
+// @Description  Creates a new description for a specific memory
+// @Tags         descriptions
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id       path      string                   true  "Memory ID"
+// @Param        request  body      CreateDescriptionRequest  true  "Description data"
+// @Success      201      {object}  DescriptionResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Failure      404      {object}  ErrorResponse
+// @Router       /secure/memories/{id}/descriptions [post]
+func CreateDescription() {}
+
+// UpdateDescription godoc
+// @Summary      Update description
+// @Description  Updates information for an existing description
+// @Tags         descriptions
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id             path      string                   true  "Memory ID"
+// @Param        description_id path      string                   true  "Description ID"
+// @Param        request        body      UpdateDescriptionRequest  true  "Data to update"
+// @Success      200            {object}  DescriptionResponse
+// @Failure      400            {object}  ErrorResponse
+// @Failure      401            {object}  ErrorResponse
+// @Failure      404            {object}  ErrorResponse
+// @Router       /secure/memories/{id}/descriptions/{description_id} [put]
+func UpdateDescription() {}
+
+// DeleteDescription godoc
+// @Summary      Delete description
+// @Description  Permanently removes a description
+// @Tags         descriptions
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id             path      string  true  "Memory ID"
+// @Param        description_id path      string  true  "Description ID"
+// @Success      204
+// @Failure      401            {object}  ErrorResponse
+// @Failure      404            {object}  ErrorResponse
+// @Router       /secure/memories/{id}/descriptions/{description_id} [delete]
+func DeleteDescription() {}
+
 type RegisterRequest struct {
 	Username    string `json:"username" example:"johndoe"`
 	DisplayName string `json:"display_name" example:"John Doe"`
@@ -293,4 +373,22 @@ type UpdateMemoryRequest struct {
 	Title    string `json:"title,omitempty" example:"Updated Vacation Title"`
 	Date     string `json:"date,omitempty" example:"2024-07-20"`
 	IsPublic bool   `json:"is_public,omitempty" example:"true"`
+}
+
+type DescriptionResponse struct {
+	ID            string `json:"id" example:"123"`
+	DescriptionID string `json:"description_id" example:"abc-xyz-123"`
+	Text          string `json:"text" example:"This was our first day at the beach, we had a great time."`
+	Index         int    `json:"index" example:"0"`
+	Version       int    `json:"version" example:"1"`
+}
+
+type CreateDescriptionRequest struct {
+	Text  string `json:"text" binding:"required" example:"First day at the beach"`
+	Index int    `json:"index" binding:"required" example:"0"`
+}
+
+type UpdateDescriptionRequest struct {
+	Text  string `json:"text,omitempty" example:"Updated description text"`
+	Index *int   `json:"index,omitempty" example:"1"`
 }

@@ -30,9 +30,11 @@ const (
 
 // Memory paths
 const (
-	MemoriesPath = "/memories"
-	MemoryPath   = "/memory"
-	MemoryIDPath = "/:memory_id"
+	MemoriesPath       = "/memories"
+	MemoryPath         = "/memory"
+	MemoryIDPath       = "/:memory_id"
+	DescriptionsPath   = "/descriptions"
+	DescriptionIDParam = "/:description_id"
 )
 
 type ContextKey string

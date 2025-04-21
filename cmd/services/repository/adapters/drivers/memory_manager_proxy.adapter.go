@@ -45,3 +45,32 @@ func (a *MemoryManagerProxyAdapter) UpdateMemory(ctx context.Context, memory *mo
 func (a *MemoryManagerProxyAdapter) DeleteMemory(ctx context.Context, memoryID string) error {
 	return a.repository.DeleteMemory(ctx, memoryID)
 }
+
+/* descriptions */
+func (a *MemoryManagerProxyAdapter) GetDescriptions(ctx context.Context, memoryID string) ([]models.Description, error) {
+	return a.repository.GetDescriptions(ctx, memoryID)
+}
+
+func (a *MemoryManagerProxyAdapter) GetDescriptionByID(ctx context.Context, memoryID string, descriptionID string) (*models.Description, error) {
+	return a.repository.GetDescriptionByID(ctx, memoryID, descriptionID)
+}
+
+func (a *MemoryManagerProxyAdapter) CreateDescription(ctx context.Context, memoryID string, description *models.Description) (*models.Description, error) {
+	err := a.repository.CreateDescription(ctx, memoryID, description)
+	if err != nil {
+		return nil, err
+	}
+	return description, nil
+}
+
+func (a *MemoryManagerProxyAdapter) UpdateDescription(ctx context.Context, memoryID string, description *models.Description) (*models.Description, error) {
+	err := a.repository.UpdateDescription(ctx, memoryID, description)
+	if err != nil {
+		return nil, err
+	}
+	return description, nil
+}
+
+func (a *MemoryManagerProxyAdapter) DeleteDescription(ctx context.Context, memoryID string, descriptionID string) error {
+	return a.repository.DeleteDescription(ctx, memoryID, descriptionID)
+}

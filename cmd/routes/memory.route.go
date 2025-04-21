@@ -15,6 +15,7 @@ import (
 func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory, authMiddleware *middleware.AuthMiddleware) {
 	memoryRoutes := router.Group(constants.APIPathV1 + constants.SecurePath + constants.MemoriesPath)
 	memoryRoutes.Use(authMiddleware.RequireAuth())
+	descriptionRoutes := memoryRoutes.Group(constants.IDParam + constants.DescriptionsPath)
 
 	memoryRoutes.GET("", func(c *gin.Context) {
 		h := utils.NewHandler(c)
@@ -96,6 +97,86 @@ func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory,
 		memoryID := c.Param("id")
 
 		err := memoryAdapter.DeleteMemory(c.Request.Context(), memoryID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.NoContent()
+	})
+
+	descriptionRoutes.GET("", func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+
+		descriptions, err := memoryAdapter.GetDescriptions(c.Request.Context(), memoryID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.OK(descriptions, utils.MsgRetrieved)
+	})
+
+	descriptionRoutes.POST("", func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		var req models.CreateDescriptionRequest
+
+		if err := c.ShouldBindJSON(&req); err != nil {
+			h.Error(errors.NewValidationError(utils.MsgInvalidInput, err))
+			return
+		}
+
+		description, err := memoryAdapter.CreateDescription(c.Request.Context(), memoryID, &req)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.Created(description, utils.MsgCreated)
+	})
+
+	descriptionRoutes.GET(constants.DescriptionIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		descriptionID := c.Param("description_id")
+
+		description, err := memoryAdapter.GetDescriptionByID(c.Request.Context(), memoryID, descriptionID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.OK(description, utils.MsgRetrieved)
+	})
+
+descriptionRoutes.PUT(constants.DescriptionIDParam, func(c *gin.Context) {
+    h := utils.NewHandler(c)
+    memoryID := c.Param("id")
+    descriptionID := c.Param("description_id")
+		var req models.UpdateDescriptionRequest
+
+		if err := c.ShouldBindJSON(&req); err != nil {
+			h.Error(errors.NewValidationError(utils.MsgInvalidInput, err))
+			return
+		}
+
+		description, err := memoryAdapter.UpdateDescription(c.Request.Context(), memoryID, descriptionID, &req)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.OK(description, utils.MsgUpdated)
+	})
+
+	descriptionRoutes.DELETE(constants.DescriptionIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		descriptionID := c.Param("description_id")
+
+		err := memoryAdapter.DeleteDescription(c.Request.Context(), memoryID, descriptionID)
 		if err != nil {
 			h.Error(err)
 			return

@@ -9,6 +9,18 @@ definitions:
     required:
     - text
     type: object
+  swagger.CreateDescriptionRequest:
+    properties:
+      index:
+        example: 0
+        type: integer
+      text:
+        example: First day at the beach
+        type: string
+    required:
+    - index
+    - text
+    type: object
   swagger.CreateMemoryRequest:
     properties:
       date:
@@ -42,6 +54,24 @@ definitions:
       username:
         example: newuser
         type: string
+    type: object
+  swagger.DescriptionResponse:
+    properties:
+      description_id:
+        example: abc-xyz-123
+        type: string
+      id:
+        example: "123"
+        type: string
+      index:
+        example: 0
+        type: integer
+      text:
+        example: This was our first day at the beach, we had a great time.
+        type: string
+      version:
+        example: 1
+        type: integer
     type: object
   swagger.ErrorResponse:
     properties:
@@ -141,6 +171,15 @@ definitions:
         type: string
       token_type:
         example: Bearer
+        type: string
+    type: object
+  swagger.UpdateDescriptionRequest:
+    properties:
+      index:
+        example: 1
+        type: integer
+      text:
+        example: Updated description text
         type: string
     type: object
   swagger.UpdateMemoryRequest:
@@ -453,6 +492,193 @@ paths:
       summary: Update memory
       tags:
       - memories
+  /secure/memories/{id}/descriptions:
+    get:
+      consumes:
+      - application/json
+      description: Gets all descriptions for a specific memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/swagger.DescriptionResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List descriptions
+      tags:
+      - descriptions
+    post:
+      consumes:
+      - application/json
+      description: Creates a new description for a specific memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Description data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.CreateDescriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/swagger.DescriptionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create description
+      tags:
+      - descriptions
+  /secure/memories/{id}/descriptions/{description_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes a description
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Description ID
+        in: path
+        name: description_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete description
+      tags:
+      - descriptions
+    get:
+      consumes:
+      - application/json
+      description: Returns information for a specific description
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Description ID
+        in: path
+        name: description_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.DescriptionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get description by ID
+      tags:
+      - descriptions
+    put:
+      consumes:
+      - application/json
+      description: Updates information for an existing description
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Description ID
+        in: path
+        name: description_id
+        required: true
+        type: string
+      - description: Data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.UpdateDescriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.DescriptionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update description
+      tags:
+      - descriptions
   /secure/users:
     get:
       consumes:

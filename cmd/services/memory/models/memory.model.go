@@ -56,7 +56,7 @@ type CreateDescriptionRequest struct {
 
 type UpdateDescriptionRequest struct {
 	Text  string `json:"text,omitempty"`
-	Index int    `json:"index,omitempty"`
+	Index *int    `json:"index,omitempty"`
 }
 
 type CreatePhotoRequest struct {
