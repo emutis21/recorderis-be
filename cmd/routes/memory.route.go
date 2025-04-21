@@ -137,7 +137,7 @@ func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory,
 		h.Created(description, utils.MsgCreated)
 	})
 
-	descriptionRoutes.GET(constants.IDParam, func(c *gin.Context) {
+	descriptionRoutes.GET(constants.DescriptionIDParam, func(c *gin.Context) {
 		h := utils.NewHandler(c)
 		memoryID := c.Param("id")
 		descriptionID := c.Param("description_id")
