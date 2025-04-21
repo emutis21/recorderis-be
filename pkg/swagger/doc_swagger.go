@@ -283,10 +283,10 @@ type MemoryResponse struct {
 }
 
 type CreateMemoryRequest struct {
-    Title        string                     `json:"title" binding:"required"`
-    Date         utils.JSONTime             `json:"date" binding:"required"`
-    IsPublic     bool                       `json:"is_public"`
-    Descriptions []models.CreateDescriptionRequest `json:"descriptions,omitempty"`
+	Title        string                            `json:"title" binding:"required"`
+	Date         utils.JSONTime                    `json:"date" binding:"required"`
+	IsPublic     bool                              `json:"is_public"`
+	Descriptions []models.CreateDescriptionRequest `json:"descriptions,omitempty"`
 }
 
 type UpdateMemoryRequest struct {

@@ -83,7 +83,6 @@ func (a *MemoryRepositoryAdapter) CreateMemory(ctx context.Context, req *models.
 }
 
 func (a *MemoryRepositoryAdapter) UpdateMemory(ctx context.Context, memoryID string, req *models.UpdateMemoryRequest) (*models.MemoryResponse, error) {
-
 	existingMemory, err := a.memoryRepo.GetMemoryByMemoryID(ctx, memoryID)
 	if err != nil {
 		return nil, err
@@ -97,8 +96,10 @@ func (a *MemoryRepositoryAdapter) UpdateMemory(ctx context.Context, memoryID str
 		existingMemory.Date = req.Date.Time()
 	}
 
-	if req.IsPublic != nil {
-		existingMemory.IsPublic = *req.IsPublic
+	existingMemory.IsPublicPtr = req.IsPublic
+
+	if req.Index != nil {
+		existingMemory.IndexPtr = req.Index
 	}
 
 	updatedMemory, err := a.memoryRepo.UpdateMemory(ctx, existingMemory)
@@ -107,6 +108,7 @@ func (a *MemoryRepositoryAdapter) UpdateMemory(ctx context.Context, memoryID str
 	}
 
 	response := mapMemoryToResponse(updatedMemory)
+
 	return &response, nil
 }
 
