@@ -422,6 +422,296 @@ const docTemplate = `{
                 }
             }
         },
+        "/secure/memories/{id}/descriptions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Gets all descriptions for a specific memory",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "descriptions"
+                ],
+                "summary": "List descriptions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/swagger.DescriptionResponse"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new description for a specific memory",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "descriptions"
+                ],
+                "summary": "Create description",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Description data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/swagger.CreateDescriptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/secure/memories/{id}/descriptions/{description_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns information for a specific description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "descriptions"
+                ],
+                "summary": "Get description by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description ID",
+                        "name": "description_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates information for an existing description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "descriptions"
+                ],
+                "summary": "Update description",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description ID",
+                        "name": "description_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Data to update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UpdateDescriptionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.DescriptionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Permanently removes a description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "descriptions"
+                ],
+                "summary": "Delete description",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Memory ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description ID",
+                        "name": "description_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/secure/users": {
             "get": {
                 "security": [
@@ -704,6 +994,23 @@ const docTemplate = `{
                 }
             }
         },
+        "swagger.CreateDescriptionRequest": {
+            "type": "object",
+            "required": [
+                "index",
+                "text"
+            ],
+            "properties": {
+                "index": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "text": {
+                    "type": "string",
+                    "example": "First day at the beach"
+                }
+            }
+        },
         "swagger.CreateMemoryRequest": {
             "type": "object",
             "required": [
@@ -750,6 +1057,31 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "newuser"
+                }
+            }
+        },
+        "swagger.DescriptionResponse": {
+            "type": "object",
+            "properties": {
+                "description_id": {
+                    "type": "string",
+                    "example": "abc-xyz-123"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123"
+                },
+                "index": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "text": {
+                    "type": "string",
+                    "example": "This was our first day at the beach, we had a great time."
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -890,6 +1222,19 @@ const docTemplate = `{
                 "token_type": {
                     "type": "string",
                     "example": "Bearer"
+                }
+            }
+        },
+        "swagger.UpdateDescriptionRequest": {
+            "type": "object",
+            "properties": {
+                "index": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "text": {
+                    "type": "string",
+                    "example": "Updated description text"
                 }
             }
         },
