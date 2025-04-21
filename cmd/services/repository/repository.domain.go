@@ -312,6 +312,8 @@ func (r *Repository) UpdateDescription(ctx context.Context, memoryID string, des
 		existingDescription.Text = description.Text
 	}
 
+	existingDescription.Index = description.Index
+
 	existingDescription.Version++
 
 	if result := r.db.Save(&existingDescription); result.Error != nil {
