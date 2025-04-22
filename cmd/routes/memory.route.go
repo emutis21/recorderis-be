@@ -6,6 +6,7 @@ import (
 	location_ports "recorderis/cmd/services/location/ports/drivers"
 	"recorderis/cmd/services/memory/models"
 	memory_ports "recorderis/cmd/services/memory/ports/drivers"
+	tag_ports "recorderis/cmd/services/tags/ports/drivers"
 	"recorderis/internals/constants"
 	"recorderis/internals/errors"
 	"recorderis/internals/utils"
@@ -13,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory, locationAdapter location_ports.ForLocation, authMiddleware *middleware.AuthMiddleware) {
+func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory, locationAdapter location_ports.ForLocation, tagAdapter tag_ports.ForTag, authMiddleware *middleware.AuthMiddleware) {
 	memoryRoutes := router.Group(constants.APIPathV1 + constants.SecurePath + constants.MemoriesPath)
 	memoryRoutes.Use(authMiddleware.RequireAuth())
 	descriptionRoutes := memoryRoutes.Group(constants.IDParam + constants.DescriptionsPath)
@@ -223,6 +224,50 @@ func SetupMemoryRoutes(router *gin.Engine, memoryAdapter memory_ports.ForMemory,
 		locationID := c.Param("location_id")
 
 		err := locationAdapter.DisassociateMemoryFromLocation(c.Request.Context(), memoryID, locationID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.NoContent()
+	})
+
+	// GET /api/v1/secure/memories/:id/tags
+	tagRoutes := memoryRoutes.Group(constants.IDParam + constants.TagsPath)
+	tagRoutes.GET("", func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+
+		tags, err := tagAdapter.GetTagsByMemoryID(c.Request.Context(), memoryID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+		h.OK(tags, utils.MsgRetrieved)
+	})
+
+	// POST /api/v1/secure/memories/:id/tags/:tag_id
+	tagRoutes.POST(constants.TagIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		tagID := c.Param("tag_id")
+
+		err := tagAdapter.AssociateMemoryWithTag(c.Request.Context(), memoryID, tagID)
+		if err != nil {
+			h.Error(err)
+			return
+		}
+
+		h.Created(nil, "Tag associated with memory")
+	})
+
+	// DELETE /api/v1/secure/memories/:id/tags/:tag_id
+	tagRoutes.DELETE(constants.TagIDParam, func(c *gin.Context) {
+		h := utils.NewHandler(c)
+		memoryID := c.Param("id")
+		tagID := c.Param("tag_id")
+
+		err := tagAdapter.DisassociateMemoryFromTag(c.Request.Context(), memoryID, tagID)
 		if err != nil {
 			h.Error(err)
 			return

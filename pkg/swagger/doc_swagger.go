@@ -413,6 +413,126 @@ func AssociateMemoryWithLocation() {}
 // @Router       /secure/memories/{id}/locations/{location_id} [delete]
 func DisassociateMemoryFromLocation() {}
 
+// Tag endpoints
+// --------------
+
+// GetTags godoc
+// @Summary      List tags
+// @Description  Gets all tags
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200  {array}   TagResponse
+// @Failure      401  {object}  ErrorResponse
+// @Router       /secure/tags [get]
+func GetTags() {}
+
+// GetTagById godoc
+// @Summary      Get tag by ID
+// @Description  Returns information for a specific tag
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Tag ID"
+// @Success      200  {object}  TagResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/tags/{id} [get]
+func GetTagById() {}
+
+// CreateTag godoc
+// @Summary      Create tag
+// @Description  Creates a new tag
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        request  body      CreateTagRequest  true  "Tag data"
+// @Success      201      {object}  TagResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Router       /secure/tags [post]
+func CreateTag() {}
+
+// UpdateTag godoc
+// @Summary      Update tag
+// @Description  Updates information for an existing tag
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id       path      string           true  "Tag ID"
+// @Param        request  body      UpdateTagRequest true  "Data to update"
+// @Success      200      {object}  TagResponse
+// @Failure      400      {object}  ErrorResponse
+// @Failure      401      {object}  ErrorResponse
+// @Failure      404      {object}  ErrorResponse
+// @Router       /secure/tags/{id} [put]
+func UpdateTag() {}
+
+// DeleteTag godoc
+// @Summary      Delete tag
+// @Description  Permanently removes a tag
+// @Tags         tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Tag ID"
+// @Success      204
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/tags/{id} [delete]
+func DeleteTag() {}
+
+// Memory-Tag relationship endpoints
+// ---------------------------------------
+
+// GetTagsByMemoryID godoc
+// @Summary      List tags for a memory
+// @Description  Gets all tags associated with a specific memory
+// @Tags         memory-tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Memory ID"
+// @Success      200  {array}   TagResponse
+// @Failure      401  {object}  ErrorResponse
+// @Failure      404  {object}  ErrorResponse
+// @Router       /secure/memories/{id}/tags [get]
+func GetTagsByMemoryID() {}
+
+// AssociateMemoryWithTag godoc
+// @Summary      Associate memory with tag
+// @Description  Associates a memory with an existing tag
+// @Tags         memory-tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id     path      string  true  "Memory ID"
+// @Param        tag_id path      string  true  "Tag ID"
+// @Success      201    {string}  string  "Tag associated with memory"
+// @Failure      401    {object}  ErrorResponse
+// @Failure      404    {object}  ErrorResponse
+// @Router       /secure/memories/{id}/tags/{tag_id} [post]
+func AssociateMemoryWithTag() {}
+
+// DisassociateMemoryFromTag godoc
+// @Summary      Remove tag from memory
+// @Description  Removes the association between a memory and a tag
+// @Tags         memory-tags
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id     path      string  true  "Memory ID"
+// @Param        tag_id path      string  true  "Tag ID"
+// @Success      204
+// @Failure      401    {object}  ErrorResponse
+// @Failure      404    {object}  ErrorResponse
+// @Router       /secure/memories/{id}/tags/{tag_id} [delete]
+func DisassociateMemoryFromTag() {}
+
 type RegisterRequest struct {
 	Username    string `json:"username" example:"johndoe"`
 	DisplayName string `json:"display_name" example:"John Doe"`
@@ -537,4 +657,18 @@ type UpdateLocationRequest struct {
 	Latitude  *float64 `json:"latitude,omitempty" example:"20.6297"`
 	City      string   `json:"city,omitempty" example:"Playa del Carmen"`
 	Country   string   `json:"country,omitempty" example:"Mexico"`
+}
+
+type TagResponse struct {
+	ID    string `json:"id" example:"123"`
+	TagID string `json:"tag_id" example:"abc-xyz-123"`
+	Name  string `json:"name" example:"vacation"`
+}
+
+type CreateTagRequest struct {
+	Name string `json:"name" binding:"required" example:"vacation"`
+}
+
+type UpdateTagRequest struct {
+	Name string `json:"name" binding:"required" example:"summer-vacation"`
 }

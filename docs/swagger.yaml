@@ -52,6 +52,14 @@ definitions:
     - date
     - title
     type: object
+  pkg_swagger.CreateTagRequest:
+    properties:
+      name:
+        example: vacation
+        type: string
+    required:
+    - name
+    type: object
   pkg_swagger.CreateUserRequest:
     properties:
       display_name:
@@ -197,6 +205,18 @@ definitions:
         example: true
         type: boolean
     type: object
+  pkg_swagger.TagResponse:
+    properties:
+      id:
+        example: "123"
+        type: string
+      name:
+        example: vacation
+        type: string
+      tag_id:
+        example: abc-xyz-123
+        type: string
+    type: object
   pkg_swagger.TokenResponse:
     properties:
       access_token:
@@ -250,6 +270,14 @@ definitions:
       title:
         example: Updated Vacation Title
         type: string
+    type: object
+  pkg_swagger.UpdateTagRequest:
+    properties:
+      name:
+        example: summer-vacation
+        type: string
+    required:
+    - name
     type: object
   pkg_swagger.UpdateUserRequest:
     properties:
@@ -998,6 +1026,261 @@ paths:
       summary: Associate memory with location
       tags:
       - memory-locations
+  /secure/memories/{id}/tags:
+    get:
+      consumes:
+      - application/json
+      description: Gets all tags associated with a specific memory
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg_swagger.TagResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List tags for a memory
+      tags:
+      - memory-tags
+  /secure/memories/{id}/tags/{tag_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Removes the association between a memory and a tag
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove tag from memory
+      tags:
+      - memory-tags
+    post:
+      consumes:
+      - application/json
+      description: Associates a memory with an existing tag
+      parameters:
+      - description: Memory ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: tag_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Tag associated with memory
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Associate memory with tag
+      tags:
+      - memory-tags
+  /secure/tags:
+    get:
+      consumes:
+      - application/json
+      description: Gets all tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/pkg_swagger.TagResponse'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List tags
+      tags:
+      - tags
+    post:
+      consumes:
+      - application/json
+      description: Creates a new tag
+      parameters:
+      - description: Tag data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.CreateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/pkg_swagger.TagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create tag
+      tags:
+      - tags
+  /secure/tags/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Permanently removes a tag
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete tag
+      tags:
+      - tags
+    get:
+      consumes:
+      - application/json
+      description: Returns information for a specific tag
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.TagResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get tag by ID
+      tags:
+      - tags
+    put:
+      consumes:
+      - application/json
+      description: Updates information for an existing tag
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Data to update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/pkg_swagger.UpdateTagRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/pkg_swagger.TagResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/pkg_swagger.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update tag
+      tags:
+      - tags
   /secure/users:
     get:
       consumes:
