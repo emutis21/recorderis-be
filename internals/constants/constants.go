@@ -46,6 +46,15 @@ const (
 	LocationIDParam     = "/:location_id"
 )
 
+// Tag paths
+const (
+	TagsPath     = "/tags"
+	TagPath      = "/tag"
+	TagIDPath    = "/:tag_id"
+	TagsByMemoryID = "/:id/tags"
+	TagIDParam   = "/:tag_id"
+)
+
 type ContextKey string
 
 // Context keys

@@ -8,6 +8,7 @@ import (
 	auth_ports "recorderis/cmd/services/auth/ports/drivers"
 	location_ports "recorderis/cmd/services/location/ports/drivers"
 	memory_ports "recorderis/cmd/services/memory/ports/drivers"
+	tag_ports "recorderis/cmd/services/tags/ports/drivers"
 	"recorderis/pkg/swagger"
 
 	_ "recorderis/docs"
@@ -21,6 +22,7 @@ func CreateRouter(
 	memoryAdapter memory_ports.ForMemory,
 	tokenManager auth_drivens.ForTokenManager,
 	locationAdapter location_ports.ForLocation,
+	tagAdapter tag_ports.ForTag,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -28,8 +30,9 @@ func CreateRouter(
 
 	routes.SetupAuthRoutes(router, authAdapter, authMiddleware)
 	routes.SetupUserRoutes(router, userAdapter, authAdapter, authMiddleware)
-	routes.SetupMemoryRoutes(router, memoryAdapter, locationAdapter, authMiddleware)
+	routes.SetupMemoryRoutes(router, memoryAdapter, locationAdapter, tagAdapter, authMiddleware)
 	routes.SetupLocationRoutes(router, locationAdapter, authMiddleware)
+	routes.SetupTagRoutes(router, tagAdapter, authMiddleware)
 
 	swaggerRoutes := swagger.NewRoutes()
 	swaggerRoutes.Register(router)

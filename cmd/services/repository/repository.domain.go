@@ -35,6 +35,8 @@ func NewRepository() (*Repository, error) {
 		&models.Photo{},
 		&models.Location{},
 		&models.MemoryLocation{},
+		&models.Tag{},
+		&models.MemoryTag{},
 	)
 
 	if err != nil {
@@ -512,6 +514,166 @@ func (r *Repository) GetMemoriesByLocationID(ctx context.Context, locationID str
 
 	for _, memoryLocation := range memoryLocations {
 		memoryIDs = append(memoryIDs, memoryLocation.MemoryID)
+	}
+
+	return memoryIDs, nil
+}
+
+/* tags & memory_tags */
+func (r *Repository) GetTags(ctx context.Context) ([]models.Tag, error) {
+	var tags []models.Tag
+
+	result := r.db.Find(&tags)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch tags", result.Error)
+	}
+
+	return tags, nil
+}
+
+func (r *Repository) GetTagByID(ctx context.Context, tagID string) (*models.Tag, error) {
+	var tag models.Tag
+
+	result := r.db.Where("tag_id = ?", tagID).First(&tag)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return nil, errors.NewNotFoundError("Tag not found", result.Error)
+		}
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch tag", result.Error)
+	}
+
+	return &tag, nil
+}
+
+func (r *Repository) CreateTag(ctx context.Context, tag *models.Tag) error {
+	if result := r.db.Create(tag); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to create tag", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) UpdateTag(ctx context.Context, tag *models.Tag) error {
+	var existingTag models.Tag
+	if err := r.db.Where("tag_id = ?", tag.TagID).First(&existingTag).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Tag not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch tag", err)
+	}
+
+	if tag.Name != "" {
+		existingTag.Name = tag.Name
+	}
+
+	if result := r.db.Save(&existingTag); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to update tag", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DeleteTag(ctx context.Context, tagID string) error {
+	var tag models.Tag
+	if err := r.db.Where("tag_id = ?", tagID).First(&tag).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Tag not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch tag", err)
+	}
+
+	result := r.db.Delete(&tag)
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to delete tag", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) AssociateMemoryWithTag(ctx context.Context, memoryID string, tagID string) error {
+	var memory models.Memory
+	if err := r.db.Where("memory_id = ?", memoryID).First(&memory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	var tag models.Tag
+	if err := r.db.Where("tag_id = ?", tagID).First(&tag).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Tag not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch tag", err)
+	}
+
+	memoryTag := models.MemoryTag{
+		MemoryID: memory.MemoryID,
+		TagID:    tag.TagID,
+	}
+
+	if result := r.db.Create(&memoryTag); result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to associate memory with tag", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) DisassociateMemoryFromTag(ctx context.Context, memoryID string, tagID string) error {
+	var memory models.Memory
+	if err := r.db.Where("memory_id = ?", memoryID).First(&memory).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Memory not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch memory", err)
+	}
+
+	var tag models.Tag
+	if err := r.db.Where("tag_id = ?", tagID).First(&tag).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.NewNotFoundError("Tag not found", err)
+		}
+
+		return errors.NewError(errors.ErrDatabase, "Failed to fetch tag", err)
+	}
+
+	result := r.db.Where("memory_id = ? AND tag_id = ?", memory.MemoryID, tag.TagID).Delete(&models.MemoryTag{})
+	if result.Error != nil {
+		return errors.NewError(errors.ErrDatabase, "Failed to disassociate memory from tag", result.Error)
+	}
+
+	return nil
+}
+
+func (r *Repository) GetTagsByMemoryID(ctx context.Context, memoryID string) ([]models.Tag, error) {
+	var tags []models.Tag
+
+	result := r.db.Table("tags").
+		Joins("JOIN memory_tags ON memory_tags.tag_id = tags.tag_id").
+		Where("memory_tags.memory_id = ?", memoryID).
+		Find(&tags)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch tags", result.Error)
+	}
+	return tags, nil
+}
+
+func (r *Repository) GetMemoriesByTagID(ctx context.Context, tagID string) ([]string, error) {
+	var memoryTags []models.MemoryTag
+	var memoryIDs []string
+
+	result := r.db.Where("tag_id = ?", tagID).Find(&memoryTags)
+	if result.Error != nil {
+		return nil, errors.NewError(errors.ErrDatabase, "Failed to fetch memories", result.Error)
+	}
+
+	for _, memoryTag := range memoryTags {
+		memoryIDs = append(memoryIDs, memoryTag.MemoryID)
 	}
 
 	return memoryIDs, nil
